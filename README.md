@@ -78,7 +78,7 @@ $mailer->send($mail);
 
 ## Settings
 
-The following settings can be configured in file `system/settings/system.ini`:
+The following settings can be configured in file `system/extensions/yellow-system.ini`:
 
 `mailerSender` (default:  `postmaster@`hostname) =  address of envelope sender  
 `mailerTransport` (default:  `sendmail`) =  how to deliver the mail (possible values: `sendmail`, `qmail`, `smtp`)  
@@ -88,7 +88,7 @@ The following settings can be configured in file `system/settings/system.ini`:
 `mailerSmtpUsername` = SMTP username  
 `mailerSmtpPassword` = SMTP password  
 `mailerAttachmentDirectory` (default:  `media/attachments/`) = Directory for attachments  
-`mailerAttachmentsMaxSize` (default:  `20000000`) = Maximum totale size of the attachments of a mail  
+`mailerAttachmentsMaxSize` (default:  `20000000`) = Maximum total size of the attachments of a mail  
 
 The address in `mailerSender` receives non-delivery reports and is normally disclosed in the `Return-Path` header of delivered mails. Can be dynamically changed with `$this->yellow->system->set("mailerSender", "address@domain")`, but for security reasons must never be assigned a user-supplied value.
 
