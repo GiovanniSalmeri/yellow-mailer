@@ -211,7 +211,7 @@ class YellowMailer {
 
 	// Build iCalendar object RFC 5545
 	private function makeIcal($ical, $headers) {
-		$quote = function($string) { return '"'. str_replace(['"', '^'], ["^'", "^^"], $string) . '"'; }; // RFC 6868
+		$quote = function($string) { return '"'. str_replace(['^', '"'], ["^^", "^'"], $string) . '"'; }; // RFC 6868
 		$escape = function($string) { return addcslashes($string, '\,;'); };
 		$timeFormat = "Ymd\THis\Z";
 		$start = gmdate($timeFormat, strtotime($ical['time'][0]));
