@@ -10,7 +10,7 @@ Email creation and transfer.
 
 To show a contact form on any page use a [mailer] shortcut. The webmaster, whose email is defined in file `system/extensions/yellow-system.ini`, receives all contact messages. A different `Author` and `Email` can be set [at the top of the page](https://github.com/datenstrom/yellow-extensions/tree/master/source/core#settings). In order to have different recipients for different subjects, you can use this optional argument in the shortcut, repeated how many times you wish:
 
-`subject email` = subject and email, separated by a space and enclosed in quotes (e.g. `"Sales department sales@example.org")
+`subject email` = subject and email, separated by a space and enclosed in quotes (e.g. `"Sales department sales@example.org"`)
 
 ## How to use Mailer from other extensions
 
