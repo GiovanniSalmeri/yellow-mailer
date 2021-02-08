@@ -21,6 +21,14 @@ MailerSmtpSenderError: Sender rejected
 MailerSmtpRecipientError: Recipient rejected
 MailerSmtpError: Error in SMTP response
 MailerUnknownTransport: Unknown mail transport
+MailerContactName: Name
+MailerContactEmail: Email
+MailerContactSubject: Subject
+MailerContactDefaultSubject: Contact Form
+MailerContactMessage: Message
+MailerContactButton: Send message
+MailerContactMessageSent: You have sent a message. Thank you!
+MailerContactMessageNotSent: Message could not be sent
 
 Language: it
 MailerMissingField: Campo richiesto mancante
@@ -43,6 +51,14 @@ MailerSmtpSenderError: Mittente rifiutato
 MailerSmtpRecipientError: Destinatario rifiutato
 MailerSmtpError: Errore nella risposta SMTP
 MailerUnknownTransport: Trasporto di posta sconosciuto
+MailerContactName: Nome
+MailerContactEmail: Email
+MailerContactSubject: Oggetto
+MailerContactDefaultSubject: Modulo di contatto
+MailerContactMessage: Messaggio
+MailerContactButton: Invia il messaggio
+MailerContactMessageSent: Il tuo messaggio è stato inviato con successo. Grazie!
+MailerContactMessageNotSent: C'è stato un problema nell'invio
 
 Langue: fr
 MailerMissingField: Champ obligatoire manquant
@@ -65,6 +81,14 @@ MailerSmtpSenderError: Expéditeur rejeté
 MailerSmtpRecipientError: Destinataire rejeté
 MailerSmtpError: Erreur dans la réponse SMTP
 MailerUnknownTransport: Transport de courrier inconnu
+MailerContactName: Nom
+MailerContactEmail: Email
+MailerContactSubject: Object
+MailerContactDefaultSubject: Formulaire de contact
+MailerContactMessage: Message
+MailerContactButton: Envoyer le message
+MailerContactMessageSent: Votre message a bien été envoyé. Merci !
+MailerContactMessageNotSent: Votre message n'a pas pu être envoyé
 
 Language: de
 MailerMissingField: Fehlendes Pflichtfeld
@@ -87,6 +111,14 @@ MailerSmtpSenderFehler: Absender abgelehnt
 MailerSmtpRecipientError: Empfänger abgelehnt
 MailerSmtpFehler: Fehler in SMTP-Antwort
 MailerUnknownTransport: Unbekannter Mail-Transport
+MailerContactName: Name
+MailerContactEmail: Email
+MailerContactSubject: Betreff
+MailerContactDefaultSubject: Kontakt-Formular
+MailerContactMessage: Nachricht
+MailerContactButton: Nachricht absenden
+MailerContactMessageSent: Nachricht wurde versandt. Vielen Dank!
+MailerContactMessageNotSent: Nachricht konnte nicht versandt werden
 
 Language: es
 MailerMissingField: Falta un campo obligatorio
@@ -109,6 +141,14 @@ MailerSmtpSenderError: Remitente rechazado
 MailerSmtpRecipientError: Destinatario rechazado
 MailerSmtpError: Error en la respuesta SMTP
 MailerUnknownTransport: Transporte de correo desconocido
+MailerContactName: Nombre
+MailerContactEmail: Email
+MailerContactSubject: Asunto
+MailerContactDefaultSubject: Formulario de contacto
+MailerContactMessage: Mensaje
+MailerContactButton: Enviar mensaje
+MailerContactMessageSent: Enviaste un mensaje. ¡Gracias!
+MailerContactMessageNotSent: El mensaje no pudo ser enviado
 
 Language: pt
 MailerMissingField: Campo obrigatório em falta
@@ -131,3 +171,11 @@ MailerSmtpSenderError: Remetente rejeitado
 MailerSmtpRecipientError: Recipiente rejeitado
 MailerSmtpError: Erro na resposta SMTP
 MailerUnknownTransport: Transporte de correio desconhecido
+MailerContactName: Nome
+MailerContactEmail: Email
+MailerContactSubject: Assunto
+MailerContactDefaultSubject: Formulário de contato
+MailerContactMessage: Mensagem
+MailerContactButton: Enviar mensagem
+MailerContactMessageSent: O seu email foi enviado com sucesso. Obrigado!
+MailerContactMessageNotSent: O seu email não pôde ser enviado

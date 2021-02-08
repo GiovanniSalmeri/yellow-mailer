@@ -20,6 +20,78 @@ class YellowMailer {
         $this->yellow->system->setDefault("mailerSmtpPassword", "");
         $this->yellow->system->setDefault("mailerAttachmentDirectory", "media/attachments/");
         $this->yellow->system->setDefault("mailerAttachmentsMaxSize", "20000000");
+        $this->yellow->system->setDefault("mailerContactAjax", "1");
+    }
+
+    // Handle page content parsing of custom block
+    public function onParseContentShortcut($page, $name, $text, $type) {
+        $output = null;
+        $statusMessage = null;
+        if ($name=="mailer" && ($type=="block" || $type=="inline")) {
+            $subjects = $this->yellow->toolbox->getTextArguments($text);
+            foreach ($subjects as $subject) {
+                if (@preg_match('/^(.*)\s+(\S+)$/', $subject, $matches)) {
+                    $addresses[$matches[1]] = $matches[2];
+                }
+            }
+
+            if ($page->getRequest("send")) {
+                if (count($addresses)==0) {
+                    $toEmail = $this->yellow->page->isExisting("email") ? $this->yellow->page->get("email") : $this->yellow->system->get("email");
+                    $subject = [ $this->yellow->language->getTextHtml("mailerContactDefaultSubject") => $toEmail ];
+                } elseif (count($addresses)==1) {
+                    $subject = $addresses;
+                } else {
+                    $subject = array_slice($addresses, $page->getRequest("subject"), 1);
+                }
+
+                $mail['headers']['to'] = [ reset($subject) ];
+                $mail['headers']['from'] = [ $page->getRequest('name') => $page->getRequest('email') ];
+                $mail['headers']['subject'] = "[".$this->yellow->system->get("sitename")."] ".key($subject);
+                $mail['text']['plain']['body'] = $page->getRequest('message')."\n";
+                $mail['text']['plain']['signature'] = $page->getRequest('name')."\n";
+                $result = $this->send($mail);
+
+                $statusMessage = $result[0] ? $this->yellow->language->getTextHtml("mailerContactMessageSent") : $this->yellow->language->getTextHtml("mailerContactMessageNotSent"). ": ". implode(", ", $result[1]);
+                if ($page->getRequest('request')=='xmlhttp') {
+                    @header("Content-Type: application/json; charset=utf-8");
+                    echo json_encode([ $result[0], $statusMessage ]);
+                    exit();
+                }
+            }
+            if (empty($result[0])) {
+                $imageLocation = $this->yellow->system->get("coreServerBase").$this->yellow->system->get("coreImageLocation");
+                $output .= "<form method=\"post\" id=\"mailer-form\">\n";
+                $output .= "<div><label>".$this->yellow->language->getTextHtml("mailerContactName")."<br /><input class=\"form-control\" type=\"text\" size=\"40\" required=\"required\" name=\"name\" id=\"name\" value=\"".$page->getRequestHtml("name")."\" /></label></div>\n";
+                $output .= "<div><label>".$this->yellow->language->getTextHtml("mailerContactEmail")."<br /><input class=\"form-control\" type=\"email\" size=\"40\" required=\"required\" name=\"email\" id=\"email\"  value=\"".$page->getRequestHtml("email")."\" /></label></div>\n";
+                if (count($addresses)>1) {
+                    $output .= "<div><label>".$this->yellow->language->getTextHtml("mailerContactSubject")."<br />\n";
+                    $output .= "<select name=\"subject\" id=\"subject\">\n";
+                    foreach (array_keys($addresses) as $count => $subjectName) {
+                        $output .= "<option value=\"".$count."\"".($page->getRequest("subject")==$count ? " selected=\"selected\"" : "").">".$subjectName."</option>\n";
+                    }
+                    $output .= "</select></label></div>\n";
+                }
+                $output .= "<div><label>".$this->yellow->language->getTextHtml("mailerContactMessage")."<br /><textarea class=\"form-control\" required=\"required\" name=\"message\" id=\"message\" rows=\"10\" cols=\"60\">".$page->getRequestHtml("message")."</textarea></label></div>\n";
+                $output .= "<div><input type=\"hidden\" name=\"send\" id=\"send\" value=\"send\" /></div>\n";
+                $output .= "<div><input class=\"btn\" type=\"submit\" value=\"".$this->yellow->language->getTextHtml("mailerContactButton")."\">";
+		if ($this->yellow->system->get("mailerContactAjax")) $output .= "<img id=\"mailer-spinner\" src=\"{$imageLocation}mailer-spinner.svg\" aria-hidden=\"true\" alt=\"\" />";
+                $output .= "</div>\n</form>\n";
+            }
+            $output .= "<div id=\"mailer-message\">".$statusMessage."</div>\n";
+        }
+        return $output;
+    }
+
+    // Handle page extra data
+    public function onParsePageExtra($page, $name) {
+        $output = null;
+        if ($name=="header") {
+            $extensionLocation = $this->yellow->system->get("coreServerBase").$this->yellow->system->get("coreExtensionLocation");
+            $output .= "<link rel=\"stylesheet\" type=\"text/css\" media=\"all\" href=\"{$extensionLocation}mailer.css\" />\n";
+            if ($this->yellow->system->get("mailerContactAjax")) $output .= "<script type=\"text/javascript\" defer=\"defer\" src=\"{$extensionLocation}mailer.js\"></script>\n";
+        }
+        return $output;
     }
 
     // Close SMTP socket on shutdown

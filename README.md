@@ -2,11 +2,19 @@
 
 Email creation and transfer.
 
+<p align="center"><img src="mailer-screenshot.png?raw=true" alt="Screenshot"></p>
+
 **This extension is experimental and should not be used in a production environment.**
 
 ## How to use Mailer
 
-This extension is for developers who wish to use advanced mailing capabilities in their extensions. It exposes the following functions:
+To show a contact form on any page use a [mailer] shortcut. The webmaster, whose email is defined in file `system/extensions/yellow-system.ini`, receives all contact messages. A different `Author` and `Email` can be set [at the top of the page](https://github.com/datenstrom/yellow-extensions/tree/master/source/core#settings). In order to have different recipients for different subjects, you can this optional argument in the shortcut, repeated how many times you wish:
+
+`subject email` = subject and email, separated by a space and enclosed in quotes (e.g. `"Sales department sales@example.org")
+
+## How to use Mailer from other extensions
+
+Besides the contact form, this extension provides developers with advanced mailing capabilities for their extensions. Its capabilities go far beyond the basic functions used by the contact form. It exposes the following functions:
 
 `validate($mail)`  
 Sanitise an email, check its correctness and return an array `[$success, $errors]`, where `$success` is a boolean and `$errors` an array of error messages. This function is automatically called by `make($mail)`
@@ -17,7 +25,7 @@ Return the email in `message/rfc822` format. This function is used by `send($mai
 `send($mail, $dontValidate = false)`  
 Send an email and return an array `[$success, $errors]`, where `$success` is a boolean and `$errors` an array of error messages
 
-## How to define an email
+## How to define an email from other extensions
 
 `$mail` is an associative array where several fields can be set.
 
@@ -61,6 +69,18 @@ An iCalendar part can be added with the following fields:
 
 ## Example
 
+Adding a simple contact form in a page:
+
+```
+[mailer]
+```
+
+Adding a contact form with different subjects and email addresses:
+
+```
+[mailer "Sales department sales@example.org" "Consumer complaints complaints@example.org" "General management management@example.org"]
+```
+
 Sending an email from an extension:
 
 ```
@@ -83,8 +103,9 @@ The following settings can be configured in file `system/extensions/yellow-syste
 `mailerSmtpSecurity` (default:  `starttls`) = protocol for secure email transport (possible values: `starttls`,  `ssl`, `none`)  
 `mailerSmtpUsername` = SMTP username  
 `mailerSmtpPassword` = SMTP password  
-`mailerAttachmentDirectory` (default:  `media/attachments/`) = Directory for attachments  
-`mailerAttachmentsMaxSize` (default:  `20000000`) = Maximum total size of the attachments of an email  
+`mailerAttachmentDirectory` (default:  `media/attachments/`) = directory for attachments  
+`mailerAttachmentsMaxSize` (default:  `20000000`) = maximum total size of the attachments of an email  
+`mailerContactAjax` (default:  `1`) = use AJAX for contact form  
 
 The address in `mailerSender` receives non-delivery reports and is included in the `Return-Path` header of delivered emails. Can be dynamically changed with `$this->yellow->system->set("mailerSender", "address@domain")`, but for security reasons must never be assigned a user-supplied value.
 

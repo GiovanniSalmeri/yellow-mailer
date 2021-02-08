@@ -1,0 +1,29 @@
+form#mailer-form div {
+    margin-bottom: 0.5em;
+}
+form#mailer-form input, form#mailer-form select, form#mailer-form textarea {
+    width: 100%;
+    max-width: 600px;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+}
+form#mailer-form textarea {
+    resize: none;
+}
+form#mailer-form input[type=submit] {
+    width: initial;
+}
+img#mailer-spinner {
+	vertical-align: text-bottom;
+	margin-left: 10px;
+	height: 20px;
+	width: 20px;
+	display: none;
+}
+div#mailer-message {
+    font-weight: bold;
+}
+div#mailer-message.error {
+    color: red;
+}
