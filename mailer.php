@@ -538,7 +538,7 @@ class YellowMailer {
         if (!$this->smtpCommand('DATA')) return [false, [$mailerSmtpError]]; // 354
         $completeMail = str_replace("\n.", "\n..", $completeMail); // RFC2821 4.5.2
         if (!$this->smtpCommand($completeMail . '.')) return [false, [$mailerSmtpError]]; // 250
-        return [true];
+        return [ true, [] ];
     }
 
     // Issue SMTP command and check answer
