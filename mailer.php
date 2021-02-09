@@ -53,7 +53,7 @@ class YellowMailer {
                 $result = $this->send($mail);
 
                 $statusMessage = $result[0] ? $this->yellow->language->getTextHtml("mailerContactMessageSent") : $this->yellow->language->getTextHtml("mailerContactMessageNotSent"). ": ". implode(", ", $result[1]);
-                if ($page->getRequest('request')=='xmlhttp') {
+                if ($page->getRequest('__httprequest')=='xmlhttp') {
                     @header("Content-Type: application/json; charset=utf-8");
                     echo json_encode([ $result[0], $statusMessage ]);
                     exit();

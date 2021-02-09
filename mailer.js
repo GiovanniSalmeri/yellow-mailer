@@ -21,7 +21,7 @@ document.addEventListener("DOMContentLoaded", function() {
     form.addEventListener("submit", function(e) {
         e.preventDefault();
         var formData = new FormData(form);
-        formData.set('request', 'xmlhttp');
+        formData.set('__httprequest', 'xmlhttp');
         spinner.style.display = "inline";
         submit(formData);
     }, false);
