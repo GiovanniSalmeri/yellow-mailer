@@ -60,7 +60,7 @@ class YellowMailer {
                 }
             }
             if (empty($result[0])) {
-                $imageLocation = $this->yellow->system->get("coreServerBase").$this->yellow->system->get("coreImageLocation");
+                $extensionLocation = $this->yellow->system->get("coreServerBase").$this->yellow->system->get("coreExtensionLocation");
                 $output .= "<form method=\"post\" id=\"mailer-form\">\n";
                 $output .= "<div><label>".$this->yellow->language->getTextHtml("mailerContactName")."<br /><input class=\"form-control\" type=\"text\" size=\"40\" required=\"required\" name=\"name\" id=\"name\" value=\"".$page->getRequestHtml("name")."\" /></label></div>\n";
                 $output .= "<div><label>".$this->yellow->language->getTextHtml("mailerContactEmail")."<br /><input class=\"form-control\" type=\"email\" size=\"40\" required=\"required\" name=\"email\" id=\"email\"  value=\"".$page->getRequestHtml("email")."\" /></label></div>\n";
@@ -75,7 +75,7 @@ class YellowMailer {
                 $output .= "<div><label>".$this->yellow->language->getTextHtml("mailerContactMessage")."<br /><textarea class=\"form-control\" required=\"required\" name=\"message\" id=\"message\" rows=\"10\" cols=\"60\">".$page->getRequestHtml("message")."</textarea></label></div>\n";
                 $output .= "<div><input type=\"hidden\" name=\"send\" id=\"send\" value=\"send\" /></div>\n";
                 $output .= "<div><input class=\"btn\" type=\"submit\" value=\"".$this->yellow->language->getTextHtml("mailerContactButton")."\">";
-		if ($this->yellow->system->get("mailerContactAjax")) $output .= "<img id=\"mailer-spinner\" src=\"{$imageLocation}mailer-spinner.svg\" aria-hidden=\"true\" alt=\"\" />";
+		if ($this->yellow->system->get("mailerContactAjax")) $output .= "<img id=\"mailer-spinner\" src=\"{$extensionLocation}mailer-spinner.svg\" aria-hidden=\"true\" alt=\"\" />";
                 $output .= "</div>\n</form>\n";
             }
             $output .= "<div id=\"mailer-message\">".$statusMessage."</div>\n";
