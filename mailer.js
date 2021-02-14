@@ -13,6 +13,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 spinner.style.display = "none";
                 if (response[0]) form.remove();
                 else message.classList.add('error');
+                message.setAttribute("role", "alert");
             }
         };
         xhr.open('POST', '', true);

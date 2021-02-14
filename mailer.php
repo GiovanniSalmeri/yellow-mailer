@@ -78,7 +78,7 @@ class YellowMailer {
 		if ($this->yellow->system->get("mailerContactAjax")) $output .= "<img id=\"mailer-spinner\" src=\"{$extensionLocation}mailer-spinner.svg\" aria-hidden=\"true\" alt=\"\" />";
                 $output .= "</div>\n</form>\n";
             }
-            $output .= "<div id=\"mailer-message\">".$statusMessage."</div>\n";
+            $output .= "<div id=\"mailer-message\"".($statusMessage ? " role=\"alert\"" : "").">".$statusMessage."</div>\n";
         }
         return $output;
     }
