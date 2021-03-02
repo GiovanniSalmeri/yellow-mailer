@@ -19,7 +19,7 @@ document.addEventListener("DOMContentLoaded", function() {
         xhr.open('POST', '', true);
         xhr.send(data);
     }
-    form.addEventListener("submit", function(e) {
+    if (form) form.addEventListener("submit", function(e) {
         e.preventDefault();
         var formData = new FormData(form);
         formData.set('__httprequest', 'xmlhttp');
