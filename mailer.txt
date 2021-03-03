@@ -60,7 +60,7 @@ MailerContactButton: Invia il messaggio
 MailerContactMessageSent: Il tuo messaggio è stato inviato con successo. Grazie!
 MailerContactMessageNotSent: C'è stato un problema nell'invio
 
-Langue: fr
+Language: fr
 MailerMissingField: Champ obligatoire manquant
 MailerBadType: Mauvais type de variable
 Adresse postale invalide: Adresse électronique non valide
