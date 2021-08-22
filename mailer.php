@@ -15,7 +15,7 @@ class YellowMailer {
         $this->yellow->system->setDefault("mailerTransport", "sendmail"); // sendmail / qmail / smtp
         $this->yellow->system->setDefault("mailerSendmailPath", "/usr/sbin/sendmail");
         $this->yellow->system->setDefault("mailerSmtpServer", "");
-        $this->yellow->system->setDefault("mailerSmtpSecurity", "starttls"); // starttls ssl none
+        $this->yellow->system->setDefault("mailerSmtpSecurity", "ssl"); // ssl starttls none
         $this->yellow->system->setDefault("mailerSmtpUsername", "");
         $this->yellow->system->setDefault("mailerSmtpPassword", "");
         $this->yellow->system->setDefault("mailerAttachmentDirectory", "media/attachments/");
@@ -570,8 +570,8 @@ class YellowMailer {
 
         if (!is_resource($this->smtpSocket)) {
             $securityParameters = [
-                'starttls'=>['tcp://', 587],
                 'ssl'=>['ssl://', 465],
+                'starttls'=>['tcp://', 587],
                 'none'=>['tcp://', 25],
             ];
             if (!isset($securityParameters[$security])) return [false, [$mailerSmtpUnknownSecurity]];
@@ -584,9 +584,10 @@ class YellowMailer {
 
             if (!$this->smtpCommand(null)) return [false, [$mailerSmtpError]]; // 220
             if (!$this->smtpCommand('EHLO ' . $hostname)) return [false, [$mailerSmtpError]]; // 250
-            if ($security=='tls') {
+            if ($security=='starttls') {
                 if (!$this->smtpCommand('STARTTLS')) return [false, [$mailerSmtpError]]; // 220
-                if (!@stream_socket_enable_crypto($this->smtpSocket, true, 
+                if (!@stream_socket_enable_crypto($this->smtpSocket, true,
+                    // https://bugs.php.net/bug.php?id=80008
                     STREAM_CRYPTO_METHOD_TLSv1_0_CLIENT |
                     STREAM_CRYPTO_METHOD_TLSv1_1_CLIENT |
                     STREAM_CRYPTO_METHOD_TLSv1_2_CLIENT)) {

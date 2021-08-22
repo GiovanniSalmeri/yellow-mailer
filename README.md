@@ -100,7 +100,7 @@ The following settings can be configured in file `system/extensions/yellow-syste
 `mailerTransport` (default:  `sendmail`) =  how to deliver the email (possible values: `sendmail`, `qmail`, `smtp`)  
 `mailerSendmailPath` (default:  `/usr/sbin/sendmail`) = path of sendmail or qmail  
 `mailerSmtpServer` = address of the SMTP server (e.g. `smtp.server.com`); if necessary a non-standard port can be specified (e.g. `smtp.server.com:2525`)  
-`mailerSmtpSecurity` (default:  `starttls`) = protocol for secure email transport (possible values: `starttls`,  `ssl`, `none`)  
+`mailerSmtpSecurity` (default:  `ssl`) = protocol for secure email transport (possible values: `ssl`, `starttls`,  `none`); `ssl` is [always to be preferred](https://nostarttls.secvuln.info/) to `starttls`  
 `mailerSmtpUsername` = SMTP username  
 `mailerSmtpPassword` = SMTP password  
 `mailerAttachmentDirectory` (default:  `media/attachments/`) = directory for attachments  
