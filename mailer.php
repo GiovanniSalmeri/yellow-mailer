@@ -63,7 +63,7 @@ class YellowMailer {
                 $extensionLocation = $this->yellow->system->get("coreServerBase").$this->yellow->system->get("coreExtensionLocation");
                 $output .= "<form method=\"post\" id=\"mailer-form\">\n";
                 $output .= "<div><label>".$this->yellow->language->getTextHtml("mailerContactName")."<br /><input class=\"form-control\" type=\"text\" size=\"40\" required=\"required\" name=\"name\" id=\"name\" value=\"".$page->getRequestHtml("name")."\" /></label></div>\n";
-                $output .= "<div><label>".$this->yellow->language->getTextHtml("mailerContactEmail")."<br /><input class=\"form-control\" type=\"email\" size=\"40\" required=\"required\" name=\"email\" id=\"email\"  value=\"".$page->getRequestHtml("email")."\" /></label></div>\n";
+                $output .= "<div><label>".$this->yellow->language->getTextHtml("mailerContactEmail")."<br /><input class=\"form-control\" type=\"email\" size=\"40\" required=\"required\" name=\"email\" id=\"email\" value=\"".$page->getRequestHtml("email")."\" /></label></div>\n";
                 if (count($addresses)>1) {
                     $output .= "<div><label>".$this->yellow->language->getTextHtml("mailerContactSubject")."<br />\n";
                     $output .= "<select name=\"subject\" id=\"subject\">\n";
@@ -191,7 +191,7 @@ class YellowMailer {
         } elseif ($type=="email") {
             return filter_var($var, FILTER_VALIDATE_EMAIL, FILTER_FLAG_EMAIL_UNICODE) ? false : $this->yellow->language->getText("mailerInvalidAddress");
         } elseif ($type=="geo") {
-            return @preg_match('/^\s*([+-]?\d+\.\d+)\s*,\s*([+-]?\d+\.\d+)\s*$/', $var, $matches) && $matches[1] >= -90 && $matches[1] <= 90 && $matches[2] >= -180 && $matches[2] <= 180  ? false : $this->yellow->language->getText("mailerInvalidGeo");
+            return @preg_match('/^\s*([+-]?\d+\.\d+)\s*,\s*([+-]?\d+\.\d+)\s*$/', $var, $matches) && $matches[1] >= -90 && $matches[1] <= 90 && $matches[2] >= -180 && $matches[2] <= 180 ? false : $this->yellow->language->getText("mailerInvalidGeo");
         } elseif ($type=="time") {
             return date_create_from_format('Y-m-d H:i', $var) ? false : $this->yellow->language->getText("mailerInvalidTime");
         } elseif ($type=="theme") {
@@ -398,7 +398,7 @@ class YellowMailer {
         } else {
             if (isset($plain['heading'])) $plainText .= $plain['heading'] . "\r\n\r\n" . str_repeat("=", 30) . "\r\n\r\n";
             $plainText .= $plain['body'] . "\r\n";
-            if (isset($plain['signature'])) $plainText .= "\r\n-- \r\n" . $plain['signature']  . "\r\n";
+            if (isset($plain['signature'])) $plainText .= "\r\n-- \r\n" . $plain['signature'] . "\r\n";
             $mimeType = "text/plain";
         }
         list($encoding, $encodedText) = $this->encodePart($plainText);
@@ -503,7 +503,7 @@ class YellowMailer {
         return preg_match('/[\x7F-\xFF]/', $text);
     }
 
-    // Transform  markdown text into HTML
+    // Transform markdown text into HTML
     private function getHtmlContent($text) {
         $markdown = new YellowMarkdownParser($this->yellow, $this->yellow->page);
         $markdown->no_markup = true;
@@ -603,7 +603,7 @@ class YellowMailer {
         foreach (['to', 'cc', 'bcc'] as $headerName) {
             if (isset($mail['headers'][$headerName])) {
                 foreach ($mail['headers'][$headerName] as $recipient) {
-                    if (!$this->smtpCommand('RCPT TO: <' . $recipient . '>')) return [false, [$mailerSmtpRecipientError]];  // 250, 251 or 252
+                    if (!$this->smtpCommand('RCPT TO: <' . $recipient . '>')) return [false, [$mailerSmtpRecipientError]]; // 250, 251 or 252
                 }
             }
         }
