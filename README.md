@@ -96,18 +96,18 @@ $mailer->send($mail);
 
 The following settings can be configured in file `system/extensions/yellow-system.ini`:
 
-`mailerSender` (default:  `postmaster@`hostname) =  address of envelope sender  
-`mailerTransport` (default:  `sendmail`) =  how to deliver the email (possible values: `sendmail`, `qmail`, `smtp`)  
-`mailerSendmailPath` (default:  `/usr/sbin/sendmail`) = path of sendmail or qmail  
-`mailerSmtpServer` = address of the SMTP server (e.g. `smtp.server.com`); if necessary a non-standard port can be specified (e.g. `smtp.server.com:2525`)  
-`mailerSmtpSecurity` (default:  `ssl`) = protocol for secure email transport (possible values: `ssl`, `starttls`,  `none`); `ssl` is [always to be preferred](https://nostarttls.secvuln.info/) to `starttls`  
-`mailerSmtpUsername` = SMTP username  
-`mailerSmtpPassword` = SMTP password  
-`mailerAttachmentDirectory` (default:  `media/attachments/`) = directory for attachments  
-`mailerAttachmentsMaxSize` (default:  `20000000`) = maximum total size of the attachments of an email  
-`mailerContactAjax` (default:  `1`) = use AJAX for contact form  
+`MailerSender` (default:  `postmaster@`hostname) =  address of envelope sender  
+`MailerTransport` (default:  `sendmail`) =  how to deliver the email (possible values: `sendmail`, `qmail`, `smtp`)  
+`MailerSendmailPath` (default:  `/usr/sbin/sendmail`) = path of sendmail or qmail  
+`MailerSmtpServer` = address of the SMTP server (e.g. `smtp.server.com`); if necessary a non-standard port can be specified (e.g. `smtp.server.com:2525`)  
+`MailerSmtpSecurity` (default:  `ssl`) = protocol for secure email transport (possible values: `ssl`, `starttls`,  `none`); `ssl` is [always to be preferred](https://nostarttls.secvuln.info/) to `starttls`  
+`MailerSmtpUsername` = SMTP username  
+`MailerSmtpPassword` = SMTP password  
+`MailerAttachmentDirectory` (default:  `media/attachments/`) = directory for attachments  
+`MailerAttachmentsMaxSize` (default:  `20000000`) = maximum total size of the attachments of an email  
+`MailerContactAjax` (default:  `1`) = use AJAX for contact form  
 
-The address in `mailerSender` receives non-delivery reports and is included in the `Return-Path` header of delivered emails. Can be dynamically changed with `$this->yellow->system->set("mailerSender", "address@domain")`, but for security reasons must never be assigned a user-supplied value.
+The address in `MailerSender` receives non-delivery reports and is included in the `Return-Path` header of delivered emails. Can be dynamically changed with `$this->yellow->system->set("mailerSender", "address@domain")`, but for security reasons must never be assigned a user-supplied value.
 
 ## Installation
 
