@@ -1,3 +1,5 @@
+// Mailer extension, https://github.com/GiovanniSalmeri/yellow-mailer
+
 "use strict";
 document.addEventListener("DOMContentLoaded", function() {
     var form = document.getElementById("mailer-form");
