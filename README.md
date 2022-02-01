@@ -78,7 +78,7 @@ Adding a simple contact form in a page:
 Adding a contact form with different subjects and email addresses:
 
 ```
-[mailer "Sales department sales@example.org" "Consumer complaints complaints@example.org" "General management management@example.org"]
+[mailer "Sales department sales@example.org" "Consumer complaints complaints@example.org"]
 ```
 
 Sending an email from an extension:
