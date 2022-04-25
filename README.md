@@ -69,13 +69,13 @@ An iCalendar part can be added with the following fields:
 
 ## Example
 
-Adding a simple contact form in a page:
+Showing a simple contact form in a page:
 
 ```
 [mailer]
 ```
 
-Adding a contact form with different subjects and email addresses:
+Showing a contact form with different subjects and email addresses:
 
 ```
 [mailer "Sales department sales@example.org" "Consumer complaints complaints@example.org"]
