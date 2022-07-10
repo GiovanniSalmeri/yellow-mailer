@@ -231,7 +231,7 @@ class YellowMailer {
         });
         @array_walk_recursive($mail['text'], function(&$value) {
             $value = str_replace(["\r", "\n"], ["", "\r\n"], trim($value));
-            $value = preg_replace('/[^[:print:]\n]/', '', $value);
+            $value = preg_replace('/[^[:print:]\n]/u', '', $value);
         });
         @array_walk_recursive($mail['attachments'], function(&$value) {
             $value = filter_var(trim($value), FILTER_SANITIZE_STRING, FILTER_FLAG_STRIP_LOW);
