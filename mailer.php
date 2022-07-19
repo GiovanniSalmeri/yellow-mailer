@@ -227,14 +227,14 @@ class YellowMailer {
     // Sanitise values of $mail array, translate in punycode international addresses
     private function sanitise(&$mail) {
         @array_walk_recursive($mail['headers'], function(&$value) {
-            $value = filter_var(trim($value), FILTER_SANITIZE_STRING, FILTER_FLAG_STRIP_LOW); // returns false if not a string
+            $value = filter_var(trim($value), FILTER_UNSAFE_RAW, FILTER_FLAG_STRIP_LOW); // returns false if not a string
         });
         @array_walk_recursive($mail['text'], function(&$value) {
             $value = str_replace(["\r", "\n"], ["", "\r\n"], trim($value));
             $value = preg_replace('/[^[:print:]\n]/u', '', $value);
         });
         @array_walk_recursive($mail['attachments'], function(&$value) {
-            $value = filter_var(trim($value), FILTER_SANITIZE_STRING, FILTER_FLAG_STRIP_LOW);
+            $value = filter_var(trim($value), FILTER_UNSAFE_RAW, FILTER_FLAG_STRIP_LOW);
         });
         if (function_exists("idn_to_ascii")) { // international addresses
             foreach (['from', 'to', 'cc', 'bcc', 'reply-to'] as $headerName) {
