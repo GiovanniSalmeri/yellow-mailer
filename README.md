@@ -115,4 +115,4 @@ The address in `MailerSender` receives non-delivery reports and is included in t
 
 ## Developer
 
-Giovanni Salmeri. [Get help](https://github.com/GiovanniSalmeri/yellow-mailer/issues).
+Giovanni Salmeri. [Get help](https://datenstrom.se/yellow/help/)
