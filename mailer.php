@@ -105,7 +105,7 @@ class YellowMailer {
         $this->sanitise($mail);
         if (!$dontValidate) {
             list($valid, $errors) = $this->validate($mail, false);
-            if (!$valid) return [false, $errors];
+            if (!$valid) return [ false, $errors ];
         }
         $completeMail = $this->make($mail, false);
         $mailerTransport = $this->yellow->system->get("mailerTransport");
@@ -114,7 +114,7 @@ class YellowMailer {
         } elseif ($mailerTransport=='smtp') {
             return $this->smtpSend($completeMail, $mail);
         } else {
-            return [false, [$this->yellow->language->getText("mailerUnknownTransport")]];
+            return [ false, [$this->yellow->language->getText("mailerUnknownTransport")] ];
         }
     }
 
@@ -122,27 +122,27 @@ class YellowMailer {
     public function validate($mail, $sanitise = true) {
         if ($sanitise) $this->sanitise($mail);
         $checks = [
-            [ [ 'text', 'plain', 'heading'], false, 'string', null ],  
-            [ [ 'text', 'plain', 'body'], true, 'string', null ],  
-            [ [ 'text', 'plain', 'signature'], false, 'string', null ],  
-            [ [ 'text', 'style-sheet'], false, 'theme', null ],
-            [ [ 'text', 'html', 'heading'], false, 'string', null ],  
-            [ [ 'text', 'html', 'body'], false, 'string', null ],  
-            [ [ 'text', 'html', 'signature'], false, 'string', null ],  
-            [ [ 'headers', 'from'], false, 'array', 'email' ],
-            [ [ 'headers', 'to'], true, 'array', 'email' ],  
-            [ [ 'headers', 'cc'], false, 'array', 'email' ],  
-            [ [ 'headers', 'bcc'], false, 'array', 'email' ],  
-            [ [ 'headers', 'reply-to'], false, 'array', 'email' ],  
-            [ [ 'headers', 'subject'], true, 'string', null ],  
-            [ [ 'headers', 'custom'], false, 'array', 'string' ],  
-            [ [ 'attachments'], false, 'array', 'file' ],  
-            [ [ 'ical', 'time', '0'], isset($mail['ical']), 'time', null ],  
-            [ [ 'ical', 'time', '1'], isset($mail['ical']), 'time', null ],  
-            [ [ 'ical', 'location'], false, 'string', null ],  
-            [ [ 'ical', 'geo'], false, 'geo', null ],  
-            [ [ 'ical', 'summary'], isset($mail['ical']), 'string', null ],  
-            [ [ 'ical', 'description'], false, 'string', null ],  
+            [ [ "text", "plain", "heading"], false, "string", null ],  
+            [ [ "text", "plain", "body"], true, "string", null ],  
+            [ [ "text", "plain", "signature"], false, "string", null ],  
+            [ [ "text", "style-sheet"], false, "theme", null ],
+            [ [ "text", "html", "heading"], false, "string", null ],  
+            [ [ "text", "html", "body"], false, "string", null ],  
+            [ [ "text", "html", "signature"], false, "string", null ],  
+            [ [ "headers", "from"], false, "array", "email" ],
+            [ [ "headers", "to"], true, "array", "email" ],  
+            [ [ "headers", "cc"], false, "array", "email" ],  
+            [ [ "headers", "bcc"], false, "array", "email" ],  
+            [ [ "headers", "reply-to"], false, "array", "email" ],  
+            [ [ "headers", "subject"], true, "string", null ],  
+            [ [ "headers", "custom"], false, "array", "string" ],  
+            [ [ "attachments"], false, "array", "file" ],  
+            [ [ "ical", "time", "0"], isset($mail["ical"]), "time", null ],  
+            [ [ "ical", "time", "1"], isset($mail["ical"]), "time", null ],  
+            [ [ "ical", "location"], false, "string", null ],  
+            [ [ "ical", "geo"], false, "geo", null ],  
+            [ [ "ical", "summary"], isset($mail["ical"]), "string", null ],  
+            [ [ "ical", "description"], false, "string", null ],  
         ];
 
         $errors = [];
@@ -176,8 +176,8 @@ class YellowMailer {
         }
         if ($attachmentsSize > $this->yellow->system->get("mailerAttachmentsMaxSize")) $errors[] = $this->yellow->language->getText("mailerTooBigAttachments");
         $mail = $this->array_clean($mail);
-        if ($mail) $errors[] = $this->yellow->language->getText("mailerUnknownFields") . ": " . preg_replace('/\s+/', ' ', var_export($mail, true));
-        return [!$errors, $errors];
+        if ($mail) $errors[] = $this->yellow->language->getText("mailerUnknownFields") . ": " . preg_replace('/\s+/', " ", var_export($mail, true));
+        return [ !$errors, $errors ];
     }
 
     // Check for errors in a single field
@@ -191,9 +191,9 @@ class YellowMailer {
         } elseif ($type=="geo") {
             return @preg_match('/^\s*([+-]?\d+\.\d+)\s*,\s*([+-]?\d+\.\d+)\s*$/', $var, $matches) && $matches[1] >= -90 && $matches[1] <= 90 && $matches[2] >= -180 && $matches[2] <= 180 ? false : $this->yellow->language->getText("mailerInvalidGeo");
         } elseif ($type=="time") {
-            return date_create_from_format('Y-m-d H:i', $var) ? false : $this->yellow->language->getText("mailerInvalidTime");
+            return date_create_from_format("Y-m-d H:i", $var) ? false : $this->yellow->language->getText("mailerInvalidTime");
         } elseif ($type=="theme") {
-            if ($var!=='void' && $var!=='default') {
+            if ($var!=="void" && $var!=="default") {
                 $themeDirectory = $this->yellow->system->get("coreThemeDirectory");
                 $fileNameTheme = $themeDirectory.$this->yellow->lookup->normaliseName($var) . ".css";
                 return @is_file($fileNameTheme) ? false : $this->yellow->language->getText("mailerMissingTheme");
@@ -226,23 +226,23 @@ class YellowMailer {
 
     // Sanitise values of $mail array, translate in punycode international addresses
     private function sanitise(&$mail) {
-        @array_walk_recursive($mail['headers'], function(&$value) {
+        @array_walk_recursive($mail["headers"], function(&$value) {
             $value = filter_var(trim($value), FILTER_UNSAFE_RAW, FILTER_FLAG_STRIP_LOW); // returns false if not a string
         });
-        @array_walk_recursive($mail['text'], function(&$value) {
-            $value = str_replace(["\r", "\n"], ["", "\r\n"], trim($value));
-            $value = preg_replace('/[^[:print:]\n]/u', '', $value);
+        @array_walk_recursive($mail["text"], function(&$value) {
+            $value = str_replace([ "\r", "\n" ], [ "", "\r\n" ], trim($value));
+            $value = preg_replace('/[^[:print:]\n]/u', "", $value);
         });
-        @array_walk_recursive($mail['attachments'], function(&$value) {
+        @array_walk_recursive($mail["attachments"], function(&$value) {
             $value = filter_var(trim($value), FILTER_UNSAFE_RAW, FILTER_FLAG_STRIP_LOW);
         });
         if (function_exists("idn_to_ascii")) { // international addresses
-            foreach (['from', 'to', 'cc', 'bcc', 'reply-to'] as $headerName) {
-                if (@is_array($mail['headers'][$headerName])) {
-                    foreach ($mail['headers'][$headerName] as $key=>$address) {
+            foreach ([ "from", "to", "cc", "bcc", "reply-to" ] as $headerName) {
+                if (@is_array($mail["headers"][$headerName])) {
+                    foreach ($mail["headers"][$headerName] as $key=>$address) {
                         if (is_string($address)) {
                             list($local, $domain) = explode("@", $address, 2);
-                            if ($this->highCharacters($domain)) $mail['headers'][$headerName][$key] = $local."@".idn_to_ascii($domain, 0, defined('INTL_IDNA_VARIANT_UTS46') ? INTL_IDNA_VARIANT_UTS46 : null);
+                            if ($this->highCharacters($domain)) $mail["headers"][$headerName][$key] = $local."@".idn_to_ascii($domain, 0, defined("INTL_IDNA_VARIANT_UTS46") ? INTL_IDNA_VARIANT_UTS46 : null);
                         }
                     }
                 }
@@ -256,56 +256,56 @@ class YellowMailer {
         $output = null;
         $output .= "Date: " . date(DATE_RFC2822) . "\r\n";
         $output .= "Mime-Version: 1.0\r\n";
-        if (!isset($mail['headers']['from'])) $mail['headers']['from'] = [$this->yellow->system->get("author")=>$this->yellow->system->get("email")];
-        foreach (['from', 'to', 'cc', 'bcc', 'reply-to'] as $headerName) {
-            if (isset($mail['headers'][$headerName])) $output .= $this->encodeEmailHeader($headerName, $mail['headers'][$headerName]) . "\r\n";
+        if (!isset($mail["headers"]["from"])) $mail["headers"]["from"] = [$this->yellow->system->get("author")=>$this->yellow->system->get("email")];
+        foreach ([ "from", "to", "cc", "bcc", "reply-to" ] as $headerName) {
+            if (isset($mail["headers"][$headerName])) $output .= $this->encodeEmailHeader($headerName, $mail["headers"][$headerName]) . "\r\n";
         }
-        if (isset($mail['headers']['subject'])) $output .= $this->encodeHeader('Subject', $mail['headers']['subject']) . "\r\n";
-        if (isset($mail['headers']['custom'])) {
-            foreach ($mail['headers']['custom'] as $key=>$header) {
+        if (isset($mail["headers"]["subject"])) $output .= $this->encodeHeader("Subject", $mail["headers"]["subject"]) . "\r\n";
+        if (isset($mail["headers"]["custom"])) {
+            foreach ($mail["headers"]["custom"] as $key=>$header) {
                 $output .= $this->encodeHeader("X-" . $key, $header) . "\r\n";
             }
         }
-        if (isset($mail['ical'])) {
-            $icalText = $this->makeIcal($mail['ical'], $mail['headers']); // must be included twice
-            $mail['text']['ical-text'] = $icalText;
-            $mail['attachments']['ical-text'] = $icalText;
+        if (isset($mail["ical"])) {
+            $icalText = $this->makeIcal($mail["ical"], $mail["headers"]); // must be included twice
+            $mail["text"]["ical-text"] = $icalText;
+            $mail["attachments"]["ical-text"] = $icalText;
         }
-        if (isset($mail['attachments'])) {
-            $output .= $this->makeMixed($mail['text'], $mail['attachments']);
+        if (isset($mail["attachments"])) {
+            $output .= $this->makeMixed($mail["text"], $mail["attachments"]);
         } else {
-            $output .= $this->makeMailText($mail['text']);
+            $output .= $this->makeMailText($mail["text"]);
         }
         return $output;
     }
 
     // Build iCalendar object RFC 5545
     private function makeIcal($ical, $headers) {
-        $quote = function($string) { return '"'. str_replace(['^', '"'], ["^^", "^'"], $string) . '"'; }; // RFC 6868
+        $quote = function($string) { return '"'. str_replace([ '^', '"' ], [ "^^", "^'" ], $string) . '"'; }; // RFC 6868
         $escape = function($string) { return addcslashes($string, '\,;'); };
         $timeFormat = "Ymd\THis\Z";
-        $start = gmdate($timeFormat, strtotime($ical['time'][0]));
-        $end = gmdate($timeFormat, strtotime($ical['time'][1]));
-        $fromEmail = reset($headers['from']); // first (and only) value
-        $fromName = key($headers['from']); // first (and only) key
+        $start = gmdate($timeFormat, strtotime($ical["time"][0]));
+        $end = gmdate($timeFormat, strtotime($ical["time"][1]));
+        $fromEmail = reset($headers["from"]); // first (and only) value
+        $fromName = key($headers["from"]); // first (and only) key
         $lines = [];
         $lines[] ="BEGIN:VCALENDAR";
         $lines[] ="PRODID:-//github.com/GiovanniSalmeri//NONSGML YellowMailer ".$this::VERSION."//EN";
         $lines[] ="VERSION:2.0";
         $lines[] ="METHOD:REQUEST";
         $lines[] ="BEGIN:VEVENT";
-        $lines[] ="UID:".md5($start."/".$ical['summary']."@".$this->yellow->toolbox->getServer("SERVER_NAME"));
+        $lines[] ="UID:".md5($start."/".$ical["summary"]."@".$this->yellow->toolbox->getServer("SERVER_NAME"));
         $lines[] ="DTSTAMP:".gmdate($timeFormat);
         $lines[] ="DTSTART:".$start;
         $lines[] ="DTEND:".$end;
         $lines[] = "ORGANIZER".(is_string($fromName) ? ";CN=".$quote($fromName) : "").":mailto:$fromEmail";
-        foreach ($headers['to'] as $key=>$toEmail) {
+        foreach ($headers["to"] as $key=>$toEmail) {
             $lines[] = "ATTENDEE;ROLE=REQ-PARTICIPANT;PARTSTAT=NEEDS-ACTION;RSVP=TRUE".(is_string($key) ? ";CN=".$quote($key) : "").":mailto:$toEmail";
         }
-        if (isset($ical['location'])) $lines[] = "LOCATION:".$escape($ical['location']);
-        if (isset($ical['geo'])) $lines[] ="GEO:".str_replace([",", " "], [";", ""], $ical['geo']);
-        $lines[] = "SUMMARY:".$escape($ical['summary']);
-        if (isset($ical['description'])) $lines[] = "DESCRIPTION:".$escape($ical['description']);
+        if (isset($ical["location"])) $lines[] = "LOCATION:".$escape($ical["location"]);
+        if (isset($ical["geo"])) $lines[] ="GEO:".str_replace([ ",", " " ], [ ";", "" ], $ical["geo"]);
+        $lines[] = "SUMMARY:".$escape($ical["summary"]);
+        if (isset($ical["description"])) $lines[] = "DESCRIPTION:".$escape($ical["description"]);
         $lines[] ="END:VEVENT";
         $lines[] ="END:VCALENDAR";
         $output = null;
@@ -336,10 +336,10 @@ class YellowMailer {
 
     // Build body of message
     private function makeMailText($mailText) {
-        if (isset($mailText['style-sheet']) || isset($mailText['ical-text'])) {
+        if (isset($mailText["style-sheet"]) || isset($mailText["ical-text"])) {
             return $this->makeAlternative($mailText);
         } else {
-            return $this->makePlaintext($mailText['plain']);
+            return $this->makePlaintext($mailText["plain"]);
         }
     }
 
@@ -374,14 +374,14 @@ class YellowMailer {
         $output = null;
         $output .= "Content-Type: multipart/alternative; boundary=\"$boundary\"\r\n\r\n";
         $output .= "--$boundary\r\n";
-        $output .= $this->makePlaintext($mailText['plain']);
-        if (isset($mailText['style-sheet'])) {
+        $output .= $this->makePlaintext($mailText["plain"]);
+        if (isset($mailText["style-sheet"])) {
             $output .= "--$boundary\r\n";
             $output .= $this->makeHtml($mailText);
         }
-        if (isset($mailText['ical-text'])) {
+        if (isset($mailText["ical-text"])) {
             $output .= "--$boundary\r\n";
-            $output .= $this->makePlaintext($mailText['ical-text'], true);
+            $output .= $this->makePlaintext($mailText["ical-text"], true);
         }
         $output .= "--$boundary--\r\n";
         return $output;
@@ -394,9 +394,9 @@ class YellowMailer {
             $plainText = $plain;
             $mimeType = "text/calendar";
         } else {
-            if (isset($plain['heading'])) $plainText .= $plain['heading'] . "\r\n\r\n" . str_repeat("=", 30) . "\r\n\r\n";
-            $plainText .= $plain['body'] . "\r\n";
-            if (isset($plain['signature'])) $plainText .= "\r\n-- \r\n" . $plain['signature'] . "\r\n";
+            if (isset($plain["heading"])) $plainText .= $plain["heading"] . "\r\n\r\n" . str_repeat("=", 30) . "\r\n\r\n";
+            $plainText .= $plain["body"] . "\r\n";
+            if (isset($plain["signature"])) $plainText .= "\r\n-- \r\n" . $plain["signature"] . "\r\n";
             $mimeType = "text/plain";
         }
         list($encoding, $encodedText) = $this->encodePart($plainText);
@@ -414,14 +414,14 @@ class YellowMailer {
         $htmlText .= "<html>\r\n";
         $htmlText .= "<head>\r\n";
         $htmlText .= "<meta charset=\"utf-8\" />\r\n";
-        $htmlText .= $this->getStyleSheet($mailText['style-sheet']);
+        $htmlText .= $this->getStyleSheet($mailText["style-sheet"]);
         $htmlText .= "</head>\r\n";
         $htmlText .= "<body>\r\n";
-        foreach (['heading'=>'header', 'body'=>'main', 'signature'=>'footer'] as $key=>$tagName) {
-            if (isset($mailText['html'][$key])) {
-                $htmlText .= "<$tagName>\r\n" . $mailText['html'][$key] . "</$tagName>\r\n";
-            } elseif (isset($mailText['plain'][$key])) {
-                $htmlText .= "<$tagName>\r\n" . $this->getHtmlContent($mailText['plain'][$key]) . "</$tagName>\r\n";
+        foreach ([ "heading"=>"header", "body"=>"main", "signature"=>"footer" ] as $key=>$tagName) {
+            if (isset($mailText["html"][$key])) {
+                $htmlText .= "<$tagName>\r\n" . $mailText["html"][$key] . "</$tagName>\r\n";
+            } elseif (isset($mailText["plain"][$key])) {
+                $htmlText .= "<$tagName>\r\n" . $this->getHtmlContent($mailText["plain"][$key]) . "</$tagName>\r\n";
             }
         }
         $htmlText .= "</body>\r\n";
@@ -440,8 +440,8 @@ class YellowMailer {
         if (!$this->highCharacters($text) && !preg_match('/\S{78,}/', $text)) {
             return wordwrap($unencodedHeader, 78, "\r\n ");
         } else {
-            $base64 = mb_encode_mimeheader($unencodedHeader, 'UTF-8', 'B');
-            $quotedPrintable = substr_replace(mb_encode_mimeheader($unencodedHeader . 'à', 'UTF-8', 'Q'), '', -8, 6);
+            $base64 = mb_encode_mimeheader($unencodedHeader, "UTF-8", "B");
+            $quotedPrintable = substr_replace(mb_encode_mimeheader($unencodedHeader . "à", "UTF-8", "Q"), "", -8, 6);
             return strlen($quotedPrintable) < strlen($base64) || !$this->highCharacters($text) ? $quotedPrintable : $base64;
         }
     }
@@ -455,7 +455,7 @@ class YellowMailer {
                     $output .= wordwrap('"' . addcslashes($name, '\\"') . '"', 76, "\r\n ");
                 } else {
                     $base64 = mb_encode_mimeheader($name, 'UTF-8', 'B');
-                    $quotedPrintable = substr_replace(mb_encode_mimeheader($name . 'à', 'UTF-8', 'Q'), '', -8, 6);
+                    $quotedPrintable = substr_replace(mb_encode_mimeheader($name . "à", "UTF-8", "Q"), "", -8, 6);
                     $output .= strlen($quotedPrintable) < strlen($base64) || !$this->highCharacters($name) ? $quotedPrintable : $base64;
                 }
             }
@@ -476,7 +476,7 @@ class YellowMailer {
         $sectionsNumber = preg_match_all("/.{0,$partsMaxLength}[^\%][^\%]|./", $value, $sections, PREG_PATTERN_ORDER);
         $headers = [];
         foreach ($sections[0] as $key=>$section) {
-            $headers[] = " ". $name . ($sectionsNumber > 1 ? "*" . $key : "") . ($encoded ? "*" : "") . "=" . ($encoded ? '' : '"') . $section . ($encoded ? '' : '"');
+            $headers[] = " ". $name . ($sectionsNumber > 1 ? "*" . $key : "") . ($encoded ? "*" : "") . "=" . ($encoded ? "" : '"') . $section . ($encoded ? "" : '"');
         }
         return implode(";\r\n", $headers);
     }
@@ -485,13 +485,13 @@ class YellowMailer {
     private function encodePart($text, $forceBase64 = false) {
         $base64 = chunk_split(base64_encode($text));
         if ($forceBase64) {
-            return ['base64', $base64];
+            return [ "base64", $base64 ];
         } else {
             $quotedPrintable = quoted_printable_encode($text);
             if (strlen($base64) < strlen($quotedPrintable)) {
-                return ['base64', $base64];
+                return [ "base64", $base64 ];
             } else {
-                return ['quoted-printable', $quotedPrintable];
+                return [ "quoted-printable", $quotedPrintable ];
             }
         }
     }
@@ -511,18 +511,18 @@ class YellowMailer {
 
     // Return content of style sheet
     private function getStyleSheet($styleSheet) {
-        if ($styleSheet==='void') {
+        if ($styleSheet==="void") {
             return "";
         } else {
             $themeDirectory = $this->yellow->system->get("coreThemeDirectory");
-            if ($styleSheet==='default') {
+            if ($styleSheet==="default") {
                 $fileNameTheme = $themeDirectory.$this->yellow->lookup->normaliseName($this->yellow->system->get("theme")).".css";
             } elseif (is_string($styleSheet)) {
                 $fileNameTheme = $themeDirectory.$this->yellow->lookup->normaliseName($styleSheet).".css";
             }
             $output = null;
             $output .= "<style>\r\n";
-            $output .= str_replace(["\r", "\n"], ["", "\r\n"], file_get_contents($fileNameTheme));
+            $output .= str_replace([ "\r", "\n" ], [ "", "\r\n" ], file_get_contents($fileNameTheme));
             $output .= "</style>\r\n";
             return $output;
         }
@@ -531,9 +531,9 @@ class YellowMailer {
     // Send mail with sendmail or qmail
     private function sendmailSend($completeMail) {
         $errors = [];
-        $sendmailFormat = $this->yellow->system->get("mailerTransport")=='qmail' ? '%s -f%s' : '%s -oi -f%s -t';
+        $sendmailFormat = $this->yellow->system->get("mailerTransport")=="qmail" ? "%s -f%s" : "%s -oi -f%s -t";
         $sendmailCommand = sprintf($sendmailFormat, escapeshellcmd($this->yellow->system->get("mailerSendmailPath")), $this->yellow->system->get("mailerSender"));
-        if (!($fileHandle = @popen($sendmailCommand, 'w'))) {
+        if (!($fileHandle = @popen($sendmailCommand, "w"))) {
             $errors[] = $this->yellow->language->getText("mailerCannotOpenSendmail");
         } else {
             $completeMail = str_replace("\r", "", $completeMail); // qmail requires, sendmail allows
@@ -544,7 +544,7 @@ class YellowMailer {
                 if (@pclose($fileHandle)!==0) $errors[] = $this->yellow->language->getText("mailerCannotCloseSendmail");
             }
         }
-        return [!$errors, $errors];
+        return [ !$errors, $errors ];
     }
 
     // Send mail with SMTP
@@ -568,47 +568,47 @@ class YellowMailer {
 
         if (!is_resource($this->smtpSocket)) {
             $securityParameters = [
-                'ssl'=>['ssl://', 465],
-                'starttls'=>['tcp://', 587],
-                'none'=>['tcp://', 25],
+                "ssl" => [ "ssl://", 465 ],
+                "starttls" => [ "tcp://", 587 ],
+                "none" => [ "tcp://", 25 ],
             ];
-            if (!isset($securityParameters[$security])) return [false, [$mailerSmtpUnknownSecurity]];
+            if (!isset($securityParameters[$security])) return [ false, [ $mailerSmtpUnknownSecurity ] ];
             list($protocol, $port) = $securityParameters[$security];
-            if (preg_match('/^(.+):(\d+)$/', $server, $matches)) list($server, $port) = [$matches[1], $matches[2]];
+            if (preg_match('/^(.+):(\d+)$/', $server, $matches)) list($server, $port) = [ $matches[1], $matches[2] ];
 
             $this->smtpSocket = @fsockopen($protocol.$server, $port, $errorNumber, $errorMessage, $connectionTimeout);
-            if (!$this->smtpSocket) return [false, [$mailerCannotOpenSmtp]];
+            if (!$this->smtpSocket) return [ false, [ $mailerCannotOpenSmtp ] ];
             @stream_set_timeout($this->smtpSocket, $responseTimeout);
 
-            if (!$this->smtpCommand(null)) return [false, [$mailerSmtpError]]; // 220
-            if (!$this->smtpCommand('EHLO ' . $hostname)) return [false, [$mailerSmtpError]]; // 250
-            if ($security=='starttls') {
-                if (!$this->smtpCommand('STARTTLS')) return [false, [$mailerSmtpError]]; // 220
+            if (!$this->smtpCommand(null)) return [ false, [ $mailerSmtpError ] ]; // 220
+            if (!$this->smtpCommand("EHLO ".$hostname)) return [ false, [ $mailerSmtpError ] ]; // 250
+            if ($security=="starttls") {
+                if (!$this->smtpCommand("STARTTLS")) return [ false, [ $mailerSmtpError ] ]; // 220
                 if (!@stream_socket_enable_crypto($this->smtpSocket, true,
                     // https://bugs.php.net/bug.php?id=80008
                     STREAM_CRYPTO_METHOD_TLSv1_0_CLIENT |
                     STREAM_CRYPTO_METHOD_TLSv1_1_CLIENT |
                     STREAM_CRYPTO_METHOD_TLSv1_2_CLIENT)) {
-                    return [false, [$mailerSmtpCannotStartTls]];
+                    return [ false, [ $mailerSmtpCannotStartTls ] ];
                 };
-                if (!$this->smtpCommand('EHLO ' . $hostname)) return [false, [$mailerSmtpError]]; // 250
+                if (!$this->smtpCommand("EHLO ".$hostname)) return [ false, [ $mailerSmtpError ] ]; // 250
             }
             if (!empty($username) && !empty($password)) {
-                if (!$this->smtpCommand('AUTH PLAIN '.base64_encode("\0".$username."\0".$password))) return [false, [$mailerSmtpAuthenticationError]]; // 235
+                if (!$this->smtpCommand("AUTH PLAIN ".base64_encode("\0".$username."\0".$password))) return [ false, [ $mailerSmtpAuthenticationError ] ]; // 235
             }
         }
-        if (!$this->smtpCommand('MAIL FROM: <' . $sender . '>')) return [false, [$mailerSmtpSenderError]]; // 250
-        foreach (['to', 'cc', 'bcc'] as $headerName) {
-            if (isset($mail['headers'][$headerName])) {
-                foreach ($mail['headers'][$headerName] as $recipient) {
-                    if (!$this->smtpCommand('RCPT TO: <' . $recipient . '>')) return [false, [$mailerSmtpRecipientError]]; // 250, 251 or 252
+        if (!$this->smtpCommand("MAIL FROM: <".$sender.">")) return [ false, [ $mailerSmtpSenderError ] ]; // 250
+        foreach ([ "to", "cc", "bcc" ] as $headerName) {
+            if (isset($mail["headers"][$headerName])) {
+                foreach ($mail["headers"][$headerName] as $recipient) {
+                    if (!$this->smtpCommand("RCPT TO: <".$recipient.">")) return [ false, [ $mailerSmtpRecipientError ] ]; // 250, 251 or 252
                 }
             }
         }
 
-        if (!$this->smtpCommand('DATA')) return [false, [$mailerSmtpError]]; // 354
+        if (!$this->smtpCommand("DATA")) return [ false, [ $mailerSmtpError ] ]; // 354
         $completeMail = str_replace("\n.", "\n..", $completeMail); // RFC2821 4.5.2
-        if (!$this->smtpCommand($completeMail . '.')) return [false, [$mailerSmtpError]]; // 250
+        if (!$this->smtpCommand($completeMail.".")) return [ false, [ $mailerSmtpError ] ]; // 250
         return [ true, [] ];
     }
 
@@ -616,7 +616,7 @@ class YellowMailer {
     private function smtpCommand($command) {
         if ($command) @fputs($this->smtpSocket, $command . "\r\n");
         while (($line = @fgets($this->smtpSocket, 512))!==false) {
-            if (substr($line, 3, 1)==' ') {
+            if (substr($line, 3, 1)==" ") {
                 return (intval($line)<400); // anything 2## or 3## means success
             }
         }
