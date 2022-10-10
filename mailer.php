@@ -147,7 +147,7 @@ class YellowMailer {
 
         $errors = [];
         $attachmentsSize = 0;
-        foreach ($checks as [$keys, $mandatory, $type, $subType]) {
+        foreach ($checks as [ $keys, $mandatory, $type, $subType ]) {
             $errorList = [];
             $fieldExists = true;
             $mailField = $mail;
