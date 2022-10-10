@@ -43,15 +43,15 @@ class YellowMailer {
                     $subject = array_slice($addresses, $page->getRequest("subject"), 1);
                 }
 
-                $mail['headers']['to'] = [ reset($subject) ];
-                $mail['headers']['from'] = [ $page->getRequest('name') => $page->getRequest('email') ];
-                $mail['headers']['subject'] = "[".$this->yellow->system->get("sitename")."] ".key($subject);
-                $mail['text']['plain']['body'] = $page->getRequest('message')."\n";
-                $mail['text']['plain']['signature'] = $page->getRequest('name')."\n";
+                $mail["headers"]["to"] = [ reset($subject) ];
+                $mail["headers"]["from"] = [ $page->getRequest("name") => $page->getRequest("email") ];
+                $mail["headers"]["subject"] = "[".$this->yellow->system->get("sitename")."] ".key($subject);
+                $mail["text"]["plain"]["body"] = $page->getRequest("message")."\n";
+                $mail["text"]["plain"]["signature"] = $page->getRequest("name")."\n";
                 $result = $this->send($mail);
 
                 $statusMessage = $result[0] ? $this->yellow->language->getTextHtml("mailerContactMessageSent") : $this->yellow->language->getTextHtml("mailerContactMessageNotSent"). ": ". implode(", ", $result[1]);
-                if ($page->getRequest('__httprequest')=='xmlhttp') {
+                if ($page->getRequest("__httprequest")=="xmlhttp") {
                     @header("Content-Type: application/json; charset=utf-8");
                     echo json_encode([ $result[0], $statusMessage ]);
                     exit();
@@ -65,7 +65,7 @@ class YellowMailer {
                 if (count($addresses)>1) {
                     $output .= "<div><label>".$this->yellow->language->getTextHtml("mailerContactSubject")."<br />\n";
                     $output .= "<select name=\"subject\" id=\"subject\">\n";
-                    foreach (array_keys($addresses) as $count => $subjectName) {
+                    foreach (array_keys($addresses) as $count=>$subjectName) {
                         $output .= "<option value=\"".$count."\"".($page->getRequest("subject")==$count ? " selected=\"selected\"" : "").">".$subjectName."</option>\n";
                     }
                     $output .= "</select></label></div>\n";
@@ -95,7 +95,7 @@ class YellowMailer {
     // Close SMTP socket on shutdown
     public function onShutdown() {
         if (is_resource($this->smtpSocket)) {
-            $this->smtpCommand('QUIT'); // 221
+            $this->smtpCommand("QUIT"); // 221
             @fclose($this->smtpSocket);
         }
     }
@@ -109,9 +109,9 @@ class YellowMailer {
         }
         $completeMail = $this->make($mail, false);
         $mailerTransport = $this->yellow->system->get("mailerTransport");
-        if ($mailerTransport=='sendmail' || $mailerTransport=='qmail') {
+        if ($mailerTransport=="sendmail" || $mailerTransport=="qmail") {
             return $this->sendmailSend($completeMail);
-        } elseif ($mailerTransport=='smtp') {
+        } elseif ($mailerTransport=="smtp") {
             return $this->smtpSend($completeMail, $mail);
         } else {
             return [ false, [$this->yellow->language->getText("mailerUnknownTransport")] ];
@@ -454,7 +454,7 @@ class YellowMailer {
                 if (!$this->highCharacters($name) && !preg_match('/\S{76,}/', $name)) {
                     $output .= wordwrap('"'.addcslashes($name, '\\"').'"', 76, "\r\n ");
                 } else {
-                    $base64 = mb_encode_mimeheader($name, 'UTF-8', 'B');
+                    $base64 = mb_encode_mimeheader($name, "UTF-8", "B");
                     $quotedPrintable = substr_replace(mb_encode_mimeheader($name."à", "UTF-8", "Q"), "", -8, 6);
                     $output .= strlen($quotedPrintable) < strlen($base64) || !$this->highCharacters($name) ? $quotedPrintable : $base64;
                 }
