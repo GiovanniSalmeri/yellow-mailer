@@ -31,41 +31,41 @@ Send an email and return an array `[$success, $errors]`, where `$success` is a b
 
 The fields for the content are the following:
 
-`$mail['text']['plain']['heading']`  
-`$mail['text']['plain']['body']`  
-`$mail['text']['plain']['signature']`  
-`$mail['text']['style-sheet']` name of style sheet in the `system/themes/` directory (without `.css`); you can also set the `default` style sheet of the site or a `void` style sheet.
+`$mail["text"]["plain"]["heading"]`  
+`$mail["text"]["plain"]["body"]`  
+`$mail["text"]["plain"]["signature"]`  
+`$mail["text"]["style-sheet"]` name of style sheet in the `system/themes/` directory (without `.css`); you can also set the `default` style sheet of the site or a `void` style sheet.
 
 The body and optional heading and signature should be written in markdown, without linebreaks inside a paragraph (paragraphs will be reflowed by mail user agents). If a style sheet is set, HTML content is automatically generated, but the single parts can be overriden with the following fields:
 
-`$mail['text']['html']['heading']`  
-`$mail['text']['html']['body']`  
-`$mail['text']['html']['signature']`  
+`$mail["text"]["html"]["heading"]`  
+`$mail["text"]["html"]["body"]`  
+`$mail["text"]["html"]["signature"]`  
 
 The fields for the email addresses are the following:
 
-`$mail['headers']['to']` an array where the value is the email address, the key (if a string) is the name  
-`$mail['headers']['cc']` "  
-`$mail['headers']['bcc']` "  
-`$mail['headers']['reply-to']` "  
-`$mail['headers']['from']` an array of one address; if not set, the webmaster email is used  
+`$mail["headers"]["to"]` an array where the value is the email address, the key (if a string) is the name  
+`$mail["headers"]["cc"]` "  
+`$mail["headers"]["bcc"]` "  
+`$mail["headers"]["reply-to"]` "  
+`$mail["headers"]["from"]` an array of one address; if not set, the webmaster email is used  
 
 The fields for other headers are the following:
 
-`$mail['headers']['subject']`  
-`$mail['headers']['custom']` an array where the keys are the names of the custom headers without `X-`, the values are their contents  
+`$mail["headers"]["subject"]`  
+`$mail["headers"]["custom"]` an array where the keys are the names of the custom headers without `X-`, the values are their contents  
 
 The field for the attachments is the following:
 
-`$mail['attachments']` an array of names of files located in the directory `media/attachments/`  
+`$mail["attachments"]` an array of names of files located in the directory `media/attachments/`  
 
 An iCalendar part can be added with the following fields:
 
-`$mail['ical']['time']` an array of two values (start and end) in format `YYYY-MM-DD HH:MM`  
-`$mail['ical']['location']`  
-`$mail['ical']['geo']` latitude and longitude in decimal format, comma-separated, e.g. `37.386013,-122.082932`  
-`$mail['ical']['summary']`  
-`$mail['ical']['description']`  
+`$mail["ical"]["time"]` an array of two values (start and end) in format `YYYY-MM-DD HH:MM`  
+`$mail["ical"]["location"]`  
+`$mail["ical"]["geo"]` latitude and longitude in decimal format, comma-separated, e.g. `37.386013,-122.082932`  
+`$mail["ical"]["summary"]`  
+`$mail["ical"]["description"]`  
 
 ## Example
 
@@ -84,9 +84,9 @@ Showing a contact form with different subjects and email addresses:
 Sending an email from an extension:
 
 ```
-$mail['text']['plain']['body'] = "Yellow is the best content management system in the world!";
-$mail['headers']['subject'] = "My first email";
-$mail['headers']['to'] = ["john@example.org", "Mary Penn" => "marypenn@example.com"];
+$mail["text"]["plain"]["body"] = "Yellow is the best content management system in the world!";
+$mail["headers"]["subject"] = "My first email";
+$mail["headers"]["to"] = ["john@example.org", "Mary Penn" => "marypenn@example.com"];
 
 $mailer = $this->yellow->extension->get("mailer");
 $mailer->send($mail);
