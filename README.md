@@ -4,7 +4,9 @@ Email creation and transfer.
 
 <p align="center"><img src="mailer-screenshot.png?raw=true" alt="Screenshot"></p>
 
-**This extension is experimental and should not be used in a production environment.**
+## How to install an extension
+
+[Download ZIP file](https://github.com/GiovanniSalmeri/yellow-mailer/archive/main.zip) and copy it into your `system/extensions` folder. [Learn more about extensions](https://github.com/annaesvensson/yellow-update).
 
 ## How to use Mailer
 
@@ -67,7 +69,7 @@ An iCalendar part can be added with the following fields:
 `$mail["ical"]["summary"]`  
 `$mail["ical"]["description"]`  
 
-## Example
+## Examples
 
 Showing a simple contact form in a page:
 
@@ -107,12 +109,8 @@ The following settings can be configured in file `system/extensions/yellow-syste
 `MailerAttachmentsMaxSize` (default:  `20000000`) = maximum total size of the attachments of an email  
 `MailerContactAjax` (default:  `1`) = use AJAX for contact form  
 
-The address in `MailerSender` receives non-delivery reports and is included in the `Return-Path` header of delivered emails. Can be dynamically changed with `$this->yellow->system->set("mailerSender", "address@domain")`, but for security reasons must never be assigned a user-supplied value.
-
-## Installation
-
-[Download extension](https://github.com/GiovanniSalmeri/yellow-mailer/archive/main.zip) and copy zip file into your `system/extensions` folder. Right click if you use Safari.
+The address in `MailerSender` receives non-delivery reports and is included in the `Return-Path` header of delivered emails. It can be dynamically changed with `$this->yellow->system->set("mailerSender", "address@domain")`, but for security reasons must never be assigned a user-supplied value.
 
 ## Developer
 
-Giovanni Salmeri. [Get help](https://datenstrom.se/yellow/help/)
+Giovanni Salmeri. [Get help](https://datenstrom.se/yellow/help/).
