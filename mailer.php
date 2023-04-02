@@ -57,7 +57,7 @@ class YellowMailer {
                     exit();
                 }
             }
-            if (empty($result[0])) {
+            if ($result[0]===false) {
                 $extensionLocation = $this->yellow->system->get("coreServerBase").$this->yellow->system->get("coreExtensionLocation");
                 $output .= "<form method=\"post\" id=\"mailer-form\">\n";
                 $output .= "<div><label>".$this->yellow->language->getTextHtml("mailerContactName")."<br /><input class=\"form-control\" type=\"text\" size=\"40\" required=\"required\" name=\"name\" id=\"name\" value=\"".$page->getRequestHtml("name")."\" /></label></div>\n";
@@ -593,7 +593,7 @@ class YellowMailer {
                 };
                 if (!$this->smtpCommand("EHLO ".$hostname)) return [ false, [ $mailerSmtpError ] ]; // 250
             }
-            if (!empty($username) && !empty($password)) {
+            if (!is_string_empty($username) && !is_string_empty($password)) {
                 if (!$this->smtpCommand("AUTH PLAIN ".base64_encode("\0".$username."\0".$password))) return [ false, [ $mailerSmtpAuthenticationError ] ]; // 235
             }
         }
