@@ -203,13 +203,15 @@ class YellowMailer {
         $statusMessage = null;
         if ($name=="mailer" && ($type=="block" || $type=="inline")) {
             $subjects = $this->yellow->toolbox->getTextArguments($text);
+            $addresses = [];
             foreach ($subjects as $subject) {
                 if (@preg_match('/^(.*)\s+(\S+)$/', $subject, $matches)) {
                     $addresses[$matches[1]] = $matches[2];
                 }
             }
 
-            if ($page->getRequest("send")) {
+            //if ($page->getRequest("send")) {
+            if ($page->isRequest("send")) {
                 if (count($addresses)==0) {
                     $toEmail = $this->yellow->page->isExisting("email") ? $this->yellow->page->get("email") : $this->yellow->system->get("email");
                     $subject = [ $this->yellow->language->getTextHtml("mailerContactDefaultSubject") => $toEmail ];
@@ -233,7 +235,7 @@ class YellowMailer {
                     exit();
                 }
             }
-            if ($result[0]===false) {
+            if (!$page->isRequest("send") || $result[0]===false) {
                 $extensionLocation = $this->yellow->system->get("coreServerBase").$this->yellow->system->get("coreExtensionLocation");
                 $output .= "<form method=\"post\" id=\"mailer-form\">\n";
                 $output .= "<div><label>".$this->yellow->language->getTextHtml("mailerContactName")."<br /><input class=\"form-control\" type=\"text\" size=\"40\" required=\"required\" name=\"name\" id=\"name\" value=\"".$page->getRequestHtml("name")."\" /></label></div>\n";
