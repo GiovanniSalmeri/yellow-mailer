@@ -81,7 +81,7 @@ class YellowMailer {
             "Language: fr",
             "MailerMissingField: Champ obligatoire manquant",
             "MailerBadType: Mauvais type de variable",
-            "Adresse postale invalide: Adresse électronique non valide",
+            "MailerInvalidAddress: Adresse électronique non valide",
             "MailerInvalidTime: Date ou heure non valide",
             "MailerInvalidGeo: Emplacement géographique non valide",
             "MailerMissingTheme: Fichier de thème manquant",
