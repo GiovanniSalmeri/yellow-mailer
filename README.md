@@ -99,10 +99,10 @@ $mailer->send($mail);
 The following settings can be configured in file `system/extensions/yellow-system.ini`:
 
 `MailerSender` =  address of envelope sender  
-`MailerTransport` =  how to deliver the email (possible values: `sendmail`, `qmail`, `smtp`)  
+`MailerTransport` =  how to deliver the email, `sendmail`, `qmail`, or `smtp`  
 `MailerSendmailPath` = path of sendmail or qmail  
-`MailerSmtpServer` = address of the SMTP server (e.g. `smtp.server.com`); if necessary a non-standard port can be specified (e.g. `smtp.server.com:2525`)  
-`MailerSmtpSecurity` = protocol for secure email transport (possible values: `ssl`, `starttls`,  `none`); `ssl` is [always to be preferred](https://nostarttls.secvuln.info/) to `starttls`  
+`MailerSmtpServer` = address of the SMTP server (e.g. `smtp.server.com`); a non-standard port can be specified (e.g. `smtp.server.com:2525`)  
+`MailerSmtpSecurity` = protocol for secure email transport, `ssl`, `starttls`, or `none`; `ssl` is [always to be preferred](https://nostarttls.secvuln.info/) to `starttls`  
 `MailerSmtpUsername` = SMTP username  
 `MailerSmtpPassword` = SMTP password  
 `MailerAttachmentDirectory` = directory for attachments  
