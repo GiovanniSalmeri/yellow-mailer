@@ -1,4 +1,4 @@
-# Mailer 0.8.16
+# Mailer 0.8.17
 
 Email creation and transfer.
 
@@ -10,24 +10,13 @@ Email creation and transfer.
 
 ## How to use Mailer
 
-To show a contact form on any page use a [mailer] shortcut. The webmaster, whose email is defined in file `system/extensions/yellow-system.ini`, receives all contact messages. A different `Author` and `Email` can be set [at the top of the page](https://github.com/annaesvensson/yellow-core#settings-page). In order to have different recipients for different subjects, you can use this optional argument in the shortcut, repeated how many times you wish:
+If Mailer is installed, it will be automatically used for email delivering by all other Yellow extension which employ the method `toolbox->mail`. You can choose in the settings between `sendmail`, `qmail`, and `SMTP` as transport. All of them are more reliable than the `mail` command of PHP.
 
-`subject email` = subject and email, separated by a space and enclosed in quotes (e.g. `"Sales department sales@example.org"`)
+## How to use Mailer from sending complex emails
 
-## How to use Mailer from other extensions
+Besides sending simple text emails, Mailer supports an alternative interface of `toobox->mail` for sending complex emails (HTML, attachments, iCal) from other extensions:
 
-Besides the contact form, this extension provides developers with advanced mailing capabilities for their extensions. Its capabilities go far beyond the basic functions used by the contact form. It exposes the following functions:
-
-`validate($mail)`  
-Sanitise an email, check its correctness and return an array `[$success, $errors]`, where `$success` is a boolean and `$errors` an array of error messages. This function is automatically called by `make($mail)`
-
-`make($mail)`  
-Return the email in `message/rfc822` format. This function is used by `send($mail)`
-
-`send($mail, $dontValidate = false)`  
-Send an email and return an array `[$success, $errors]`, where `$success` is a boolean and `$errors` an array of error messages
-
-## How to define an email from other extensions
+`toolbox->mail($action, $mail, true): bool`
 
 `$mail` is an associative array where several fields can be set.
 
@@ -71,27 +60,16 @@ An iCalendar part can be added with the following fields:
 
 ## Examples
 
-Showing a simple contact form in a page:
-
-```
-[mailer]
-```
-
-Showing a contact form with different subjects and email addresses:
-
-```
-[mailer "Sales department sales@example.org" "Consumer complaints complaints@example.org"]
-```
-
 Sending an email from an extension:
 
 ```
-$mail["text"]["plain"]["body"] = "Yellow is the best content management system in the world!";
+$mail["text"]["plain"]["body"] = "**Yellow** is the best content management system in the world!";
+$mail["text"]["style-sheet"] = "void"
 $mail["headers"]["subject"] = "My first email";
-$mail["headers"]["to"] = ["john@example.org", "Mary Penn" => "marypenn@example.com"];
+$mail["headers"]["to"] = [ "john@example.org", "Mary Penn" => "marypenn@example.com" ];
+$mail["attachments"] = [ "yellow.pdf" ];
 
-$mailer = $this->yellow->extension->get("mailer");
-$mailer->send($mail);
+$status = $this->yellow->toolbox->mail("message", $mail, true);
 ```
 
 ## Settings
@@ -107,7 +85,6 @@ The following settings can be configured in file `system/extensions/yellow-syste
 `MailerSmtpPassword` = SMTP password  
 `MailerAttachmentDirectory` = directory for attachments  
 `MailerAttachmentsMaxSize` = maximum total size of the attachments of an email  
-`MailerContactAjax` = use AJAX for contact form  
 
 The address in `MailerSender` receives non-delivery reports and is included in the `Return-Path` header of delivered emails. It can be dynamically changed with `$this->yellow->system->set("mailerSender", "address@domain")`, but for security reasons must never be assigned a user-supplied value.
 

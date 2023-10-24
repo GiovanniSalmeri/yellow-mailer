@@ -2,7 +2,7 @@
 // Mailer extension, https://github.com/GiovanniSalmeri/yellow-mailer
 
 class YellowMailer {
-    const VERSION = "0.8.16";
+    const VERSION = "0.8.17";
     public $yellow;         //access to API
     private $smtpSocket;
 
@@ -18,7 +18,6 @@ class YellowMailer {
         $this->yellow->system->setDefault("mailerSmtpPassword", "");
         $this->yellow->system->setDefault("mailerAttachmentDirectory", "media/attachments/");
         $this->yellow->system->setDefault("mailerAttachmentsMaxSize", "20000000");
-        $this->yellow->system->setDefault("mailerContactAjax", "1");
         $this->yellow->language->setDefaults([
             "Language: en",
             "MailerMissingField: Missing required field",
@@ -41,14 +40,6 @@ class YellowMailer {
             "MailerSmtpRecipientError: Recipient rejected",
             "MailerSmtpError: Error in SMTP response",
             "MailerUnknownTransport: Unknown mail transport",
-            "MailerContactName: Name",
-            "MailerContactEmail: Email",
-            "MailerContactSubject: Subject",
-            "MailerContactDefaultSubject: Contact Form",
-            "MailerContactMessage: Message",
-            "MailerContactButton: Send message",
-            "MailerContactMessageSent: You have sent a message. Thank you!",
-            "MailerContactMessageNotSent: Message could not be sent",
             "Language: it",
             "MailerMissingField: Campo richiesto mancante",
             "MailerBadType: Tipo di variabile errato",
@@ -70,14 +61,27 @@ class YellowMailer {
             "MailerSmtpRecipientError: Destinatario rifiutato",
             "MailerSmtpError: Errore nella risposta SMTP",
             "MailerUnknownTransport: Trasporto di posta sconosciuto",
-            "MailerContactName: Nome",
-            "MailerContactEmail: Email",
-            "MailerContactSubject: Oggetto",
-            "MailerContactDefaultSubject: Modulo di contatto",
-            "MailerContactMessage: Messaggio",
-            "MailerContactButton: Invia il messaggio",
-            "MailerContactMessageSent: Il tuo messaggio è stato inviato con successo. Grazie!",
-            "MailerContactMessageNotSent: C'è stato un problema nell'invio",
+            "Language: sv",
+            "MailerMissingField: Saknar obligatoriskt fält",
+            "MailerBadType: Felaktig typ av variabel",
+            "MailerInvalidAddress: Ogiltig e-postadress",
+            "MailerInvalidTime: Ogiltigt datum eller tid",
+            "MailerInvalidGeo: Ogiltig geografisk plats",
+            "MailerMissingTheme: Saknar temafil",
+            "MailerMissingAttachment: Saknar bilagor",
+            "MailerTooBigAttachments: Bilagorna för stora",
+            "MailerUnknownFields:  Okända fält",
+            "MailerCannotOpenSendmail: Kan inte öppna sendmail",
+            "MailerCannotWriteToSendmail: Kan inte skriva till sendmail",
+            "MailerCannotCloseSendmail: Kan inte stänga sendmail",
+            "MailerCannotOpenSmtp: Kan inte öppna SMTP-server",
+            "MailerSmtpUnknownSecurity: Okänt säkerhetsprotokoll",
+            "MailerSmtpCannotStartTls: Kan inte starta TLS",
+            "MailerSmtpAuthenticationError: Dåligt användarnamn eller lösenord",
+            "MailerSmtpSenderError: Avsändaren avvisad",
+            "MailerSmtpRecipientError: Mottagaren avvisad",
+            "MailerSmtpError: Fel i SMTP-svar",
+            "MailerUnknownTransport: Okänd posttransport",
             "Language: fr",
             "MailerMissingField: Champ obligatoire manquant",
             "MailerBadType: Mauvais type de variable",
@@ -89,24 +93,16 @@ class YellowMailer {
             "MailerTooBigAttachments: Pièces jointes trop grandes",
             "MailerUnknownFields: Champs inconnus",
             "MailerCannotOpenSendmail: Impossible d'ouvrir sendmail",
-            "MailerCannotWriteToSendmail: Ne peut pas écrire à sendmail",
-            "MailerCannotCloseSendmail: Ne peut pas fermer sendmail",
+            "MailerCannotWriteToSendmail: Impossible d'écrire à sendmail",
+            "MailerCannotCloseSendmail: Impossible de fermer sendmail",
             "MailerCannotOpenSmtp: Impossible d'ouvrir le serveur SMTP",
             "MailerSmtpUnknownSecurity: Protocole de sécurité inconnu",
-            "MailerSmtpCannotStartTls: Ne peut pas démarrer TLS",
+            "MailerSmtpCannotStartTls: Impossible de démarrer TLS",
             "MailerSmtpAuthenticationError: Mauvais nom d'utilisateur ou mot de passe",
             "MailerSmtpSenderError: Expéditeur rejeté",
             "MailerSmtpRecipientError: Destinataire rejeté",
             "MailerSmtpError: Erreur dans la réponse SMTP",
             "MailerUnknownTransport: Transport de courrier inconnu",
-            "MailerContactName: Nom",
-            "MailerContactEmail: Email",
-            "MailerContactSubject: Object",
-            "MailerContactDefaultSubject: Formulaire de contact",
-            "MailerContactMessage: Message",
-            "MailerContactButton: Envoyer le message",
-            "MailerContactMessageSent: Votre message a bien été envoyé. Merci !",
-            "MailerContactMessageNotSent: Votre message n'a pas pu être envoyé",
             "Language: de",
             "MailerMissingField: Fehlendes Pflichtfeld",
             "MailerBadType: Schlechter Variablentyp",
@@ -128,14 +124,6 @@ class YellowMailer {
             "MailerSmtpRecipientError: Empfänger abgelehnt",
             "MailerSmtpFehler: Fehler in SMTP-Antwort",
             "MailerUnknownTransport: Unbekannter Mail-Transport",
-            "MailerContactName: Name",
-            "MailerContactEmail: Email",
-            "MailerContactSubject: Betreff",
-            "MailerContactDefaultSubject: Kontakt-Formular",
-            "MailerContactMessage: Nachricht",
-            "MailerContactButton: Nachricht absenden",
-            "MailerContactMessageSent: Nachricht wurde versandt. Vielen Dank!",
-            "MailerContactMessageNotSent: Nachricht konnte nicht versandt werden",
             "Language: es",
             "MailerMissingField: Falta un campo obligatorio",
             "MailerBadType: Tipo de variable incorrecto",
@@ -157,14 +145,6 @@ class YellowMailer {
             "MailerSmtpRecipientError: Destinatario rechazado",
             "MailerSmtpError: Error en la respuesta SMTP",
             "MailerUnknownTransport: Transporte de correo desconocido",
-            "MailerContactName: Nombre",
-            "MailerContactEmail: Email",
-            "MailerContactSubject: Asunto",
-            "MailerContactDefaultSubject: Formulario de contacto",
-            "MailerContactMessage: Mensaje",
-            "MailerContactButton: Enviar mensaje",
-            "MailerContactMessageSent: Enviaste un mensaje. ¡Gracias!",
-            "MailerContactMessageNotSent: El mensaje no pudo ser enviado",
             "Language: pt",
             "MailerMissingField: Campo obrigatório em falta",
             "MailerBadType: Mau tipo de variável",
@@ -186,14 +166,6 @@ class YellowMailer {
             "MailerSmtpRecipientError: Recipiente rejeitado",
             "MailerSmtpError: Erro na resposta SMTP",
             "MailerUnknownTransport: Transporte de correio desconhecido",
-            "MailerContactName: Nome",
-            "MailerContactEmail: Email",
-            "MailerContactSubject: Assunto",
-            "MailerContactDefaultSubject: Formulário de contato",
-            "MailerContactMessage: Mensagem",
-            "MailerContactButton: Enviar mensagem",
-            "MailerContactMessageSent: O seu email foi enviado com sucesso. Obrigado!",
-            "MailerContactMessageNotSent: O seu email não pôde ser enviado",
             "Language: pl",
             "MailerMissingField: Wypełnij wymagane pola",
             "MailerBadType: Niewłaściwy typ zmiennej",
@@ -215,88 +187,30 @@ class YellowMailer {
             "MailerSmtpRecipientError: Odbiorca odrzucony",
             "MailerSmtpError: Błąd w odpowiedzi protokołu SMTP",
             "MailerUnknownTransport: Nieznany transport poczty",
-            "MailerContactName: Imię i nazwisko",
-            "MailerContactEmail: Adres email",
-            "MailerContactSubject: Temat",
-            "MailerContactDefaultSubject: Wiadomość z formularza witryny",
-            "MailerContactMessage: Wiadomość",
-            "MailerContactButton: Wyślij wiadomość",
-            "MailerContactMessageSent: Wiadomość została wysłana.",
-            "MailerContactMessageNotSent: Wiadomość nie mogła zostać wysłana",
         ]);
     }
 
-    // Handle page content parsing of custom block
-    public function onParseContentShortcut($page, $name, $text, $type) {
-        $output = null;
-        $statusMessage = null;
-        if ($name=="mailer" && ($type=="block" || $type=="inline")) {
-            $subjects = $this->yellow->toolbox->getTextArguments($text);
-            $addresses = [];
-            foreach ($subjects as $subject) {
-                if (@preg_match('/^(.*)\s+(\S+)$/', $subject, $matches)) {
-                    $addresses[$matches[1]] = $matches[2];
-                }
-            }
-
-            //if ($page->getRequest("send")) {
-            if ($page->isRequest("send")) {
-                if (count($addresses)==0) {
-                    $toEmail = $this->yellow->page->isExisting("email") ? $this->yellow->page->get("email") : $this->yellow->system->get("email");
-                    $subject = [ $this->yellow->language->getTextHtml("mailerContactDefaultSubject") => $toEmail ];
-                } elseif (count($addresses)==1) {
-                    $subject = $addresses;
-                } else {
-                    $subject = array_slice($addresses, $page->getRequest("subject"), 1);
-                }
-
-                $mail["headers"]["to"] = [ reset($subject) ];
-                $mail["headers"]["from"] = [ $page->getRequest("name") => $page->getRequest("email") ];
-                $mail["headers"]["subject"] = "[".$this->yellow->system->get("sitename")."] ".key($subject);
-                $mail["text"]["plain"]["body"] = $page->getRequest("message")."\n";
-                $mail["text"]["plain"]["signature"] = $page->getRequest("name")."\n";
-                $result = $this->send($mail);
-
-                $statusMessage = $result[0] ? $this->yellow->language->getTextHtml("mailerContactMessageSent") : $this->yellow->language->getTextHtml("mailerContactMessageNotSent"). ": ". implode(", ", $result[1]);
-                if ($page->getRequest("__httprequest")=="xmlhttp") {
-                    @header("Content-Type: application/json; charset=utf-8");
-                    echo json_encode([ $result[0], $statusMessage ]);
-                    exit();
-                }
-            }
-            if (!$page->isRequest("send") || $result[0]===false) {
-                $extensionLocation = $this->yellow->system->get("coreServerBase").$this->yellow->system->get("coreExtensionLocation");
-                $output .= "<form method=\"post\" id=\"mailer-form\">\n";
-                $output .= "<div><label>".$this->yellow->language->getTextHtml("mailerContactName")."<br /><input class=\"form-control\" type=\"text\" size=\"40\" required=\"required\" name=\"name\" id=\"name\" value=\"".$page->getRequestHtml("name")."\" /></label></div>\n";
-                $output .= "<div><label>".$this->yellow->language->getTextHtml("mailerContactEmail")."<br /><input class=\"form-control\" type=\"email\" size=\"40\" required=\"required\" name=\"email\" id=\"email\" value=\"".$page->getRequestHtml("email")."\" /></label></div>\n";
-                if (count($addresses)>1) {
-                    $output .= "<div><label>".$this->yellow->language->getTextHtml("mailerContactSubject")."<br />\n";
-                    $output .= "<select name=\"subject\" id=\"subject\">\n";
-                    foreach (array_keys($addresses) as $count=>$subjectName) {
-                        $output .= "<option value=\"".$count."\"".($page->getRequest("subject")==$count ? " selected=\"selected\"" : "").">".$subjectName."</option>\n";
-                    }
-                    $output .= "</select></label></div>\n";
-                }
-                $output .= "<div><label>".$this->yellow->language->getTextHtml("mailerContactMessage")."<br /><textarea class=\"form-control\" required=\"required\" name=\"message\" id=\"message\" rows=\"10\" cols=\"60\">".$page->getRequestHtml("message")."</textarea></label></div>\n";
-                $output .= "<div><input type=\"hidden\" name=\"send\" id=\"send\" value=\"send\" /></div>\n";
-                $output .= "<div><input class=\"btn\" type=\"submit\" value=\"".$this->yellow->language->getTextHtml("mailerContactButton")."\">";
-		if ($this->yellow->system->get("mailerContactAjax")) $output .= "<img id=\"mailer-spinner\" src=\"{$extensionLocation}mailer-spinner.svg\" aria-hidden=\"true\" alt=\"\" />";
-                $output .= "</div>\n</form>\n";
-            }
-            $output .= "<div id=\"mailer-message\"".($statusMessage ? " role=\"alert\"" : "").">".$statusMessage."</div>\n";
+    // Handle mail sending
+    public function onMail($action, $headers, $message) {
+        $mail = [];
+        if (is_array($headers) && is_string($message)) {
+            $mail["headers"] = $this->normaliseHeaders($headers);
+            $mail["text"]["plain"]["body"] = $message;
+        } elseif (is_array($headers) && $message===true) {
+            $mail = $headers;
+        } else {
+            return 500;
         }
-        return $output;
-    }
+        list($success, $errors) = $this->send($mail);
+        if (!$success) $this->yellow->toolbox->log("error", "Mailer: ".implode(", ", $errors));
+        return $success ? 200 : 500;
 
-    // Handle page extra data
-    public function onParsePageExtra($page, $name) {
-        $output = null;
-        if ($name=="header") {
-            $extensionLocation = $this->yellow->system->get("coreServerBase").$this->yellow->system->get("coreExtensionLocation");
-            $output .= "<link rel=\"stylesheet\" type=\"text/css\" media=\"all\" href=\"{$extensionLocation}mailer.css\" />\n";
-            if ($this->yellow->system->get("mailerContactAjax")) $output .= "<script type=\"text/javascript\" defer=\"defer\" src=\"{$extensionLocation}mailer.js\"></script>\n";
-        }
-        return $output;
+        // TODO: is an error page better?
+        // if (!$success) { 
+            // $this->yellow->page->error(500, implode(", ", $errors));
+        // } else {
+            // return 200;
+        // }
     }
 
     // Close SMTP socket on shutdown
@@ -307,15 +221,85 @@ class YellowMailer {
         }
     }
 
+    // Normalise headers in format expected by make
+    private function normaliseHeaders($input) {
+        $headers = [];
+        foreach ($input as $key=>$value) {
+            $key = strtolower($key);
+            if (in_array($key, [ "from", "to", "cc", "bcc", "reply-to" ])) {
+                $headers[$key] = is_string($value) ? $this->parseAddresses($value) : $value;
+            } elseif (substr($key, 0, 2)=="x-") {
+                $headers["custom"][substr($key, 2)] = $value;
+            } elseif ($key=="subject") {
+                $headers[$key] = $value;
+            }
+        }
+        return $headers;
+    }
+
+    // Parses an address string as defined in RFC2822
+    private function parseAddresses($text) {
+        $state = "normal";
+        $display = $address = "";
+        $list = [];
+        $text .= ",";
+        for ($i=0; $i<strlen($text); $i++) {
+            if ($state=="normal") {
+                if ($text[$i]=="\"") {
+                    $state = "quoted";
+                } elseif ($text[$i]=="<") {
+                    $state = "delimited";
+                } elseif ($text[$i]==":") {
+                    $display = "";
+                } elseif ($text[$i]=="," || $text[$i]==";") {
+                    $address = trim($address); $display = trim($display);
+                    if ($address=="") {
+                        $address = $display; $display = "";
+                    }
+                    if ($address!=="") {
+                        if ($display=="") {
+                            $list[] = $address;
+                        } else {
+                            $n = 0; while (isset($list[$unique = $display.($n ? "[$n]" : "")])) $n++;
+                            $list[$unique] = $address;
+                        }
+                        $display = $address = "";
+                    }
+                }
+                else {
+                    $display .= $text[$i];
+                }
+            } elseif ($state=="quoted") {
+                if ($text[$i]=="\"") {
+                    $state = "normal";
+                } elseif ($text[$i]=="\\") {
+                    $state = "escaped";
+                } else {
+                    $display .= $text[$i];
+                }
+            } elseif ($state=="delimited") {
+                if ($text[$i]==">") {
+                    $state = "normal";
+                } else {
+                    $address .= $text[$i];
+                }
+            } elseif ($state=="escaped") {
+                $state = "quoted";
+                $display .= $text[$i];
+            }
+        }
+        return $list;
+    }
+
     // Send email (after sanitising, validating and building)
     public function send($mail, $dontValidate = false) {
         $this->sanitise($mail);
         if (!$dontValidate) {
-            list($valid, $errors) = $this->validate($mail, false);
-            if (!$valid) return [ false, $errors ];
+            list($success, $errors) = $this->validate($mail, false);
+            if (!$success) return [ false, $errors ];
         }
         $completeMail = $this->make($mail, false);
-        $mailerTransport = $this->yellow->system->get("mailerTransport");
+        $mailerTransport = strtolower($this->yellow->system->get("mailerTransport"));
         if ($mailerTransport=="sendmail" || $mailerTransport=="qmail") {
             return $this->sendmailSend($completeMail);
         } elseif ($mailerTransport=="smtp") {
@@ -329,27 +313,27 @@ class YellowMailer {
     public function validate($mail, $sanitise = true) {
         if ($sanitise) $this->sanitise($mail);
         $checks = [
-            [ [ "text", "plain", "heading" ], false, "string", null ],  
-            [ [ "text", "plain", "body" ], true, "string", null ],  
-            [ [ "text", "plain", "signature" ], false, "string", null ],  
+            [ [ "text", "plain", "heading" ], false, "string", null ],
+            [ [ "text", "plain", "body" ], true, "string", null ],
+            [ [ "text", "plain", "signature" ], false, "string", null ],
             [ [ "text", "style-sheet" ], false, "theme", null ],
-            [ [ "text", "html", "heading" ], false, "string", null ],  
-            [ [ "text", "html", "body" ], false, "string", null ],  
-            [ [ "text", "html", "signature" ], false, "string", null ],  
+            [ [ "text", "html", "heading" ], false, "string", null ],
+            [ [ "text", "html", "body" ], false, "string", null ],
+            [ [ "text", "html", "signature" ], false, "string", null ],
             [ [ "headers", "from" ], false, "array", "email" ],
-            [ [ "headers", "to" ], true, "array", "email" ],  
-            [ [ "headers", "cc" ], false, "array", "email" ],  
-            [ [ "headers", "bcc" ], false, "array", "email" ],  
-            [ [ "headers", "reply-to" ], false, "array", "email" ],  
-            [ [ "headers", "subject" ], true, "string", null ],  
-            [ [ "headers", "custom" ], false, "array", "string" ],  
-            [ [ "attachments" ], false, "array", "file" ],  
-            [ [ "ical", "time", "0" ], isset($mail["ical" ]), "time", null ],  
-            [ [ "ical", "time", "1" ], isset($mail["ical" ]), "time", null ],  
-            [ [ "ical", "location" ], false, "string", null ],  
-            [ [ "ical", "geo" ], false, "geo", null ],  
-            [ [ "ical", "summary" ], isset($mail["ical" ]), "string", null ],  
-            [ [ "ical", "description" ], false, "string", null ],  
+            [ [ "headers", "to" ], true, "array", "email" ],
+            [ [ "headers", "cc" ], false, "array", "email" ],
+            [ [ "headers", "bcc" ], false, "array", "email" ],
+            [ [ "headers", "reply-to" ], false, "array", "email" ],
+            [ [ "headers", "subject" ], true, "string", null ],
+            [ [ "headers", "custom" ], false, "array", "string" ],
+            [ [ "attachments" ], false, "array", "file" ],
+            [ [ "ical", "time", "0" ], isset($mail["ical" ]), "time", null ],
+            [ [ "ical", "time", "1" ], isset($mail["ical" ]), "time", null ],
+            [ [ "ical", "location" ], false, "string", null ],
+            [ [ "ical", "geo" ], false, "geo", null ],
+            [ [ "ical", "summary" ], isset($mail["ical" ]), "string", null ],
+            [ [ "ical", "description" ], false, "string", null ],
         ];
 
         $errors = [];
@@ -375,7 +359,7 @@ class YellowMailer {
                     }
                 }
             }
-            if ($errorList) $errors[] = "[".implode("']['", $keys)."']: ".implode(", ", $errorList);
+            if ($errorList) $errors[] = "[\"".implode("\"][\"", $keys)."\"]: ".implode(", ", $errorList);
             // Unset the fields checked so as to leave at the end only the unknown ones
             if (count($keys)==1) unset($mail[$keys[0]]);
             elseif (count($keys)==2) unset($mail[$keys[0]][$keys[1]]);
@@ -758,7 +742,7 @@ class YellowMailer {
     private function smtpSend($completeMail, $mail) {
         $sender = $this->yellow->system->get("mailerSender");
         $server = $this->yellow->system->get("mailerSmtpServer");
-        $security = $this->yellow->system->get("mailerSmtpSecurity");
+        $security = strtolower($this->yellow->system->get("mailerSmtpSecurity"));
         $username = $this->yellow->system->get("mailerSmtpUsername");
         $password = $this->yellow->system->get("mailerSmtpPassword");
         $connectionTimeout = 30;
