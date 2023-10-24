@@ -10,7 +10,7 @@ Email creation and transfer.
 
 If Mailer is installed, it will be automatically used for email delivering by all other Yellow extensions which employ the method `toolbox->mail`. You can choose in the settings between `sendmail`, `qmail`, and `SMTP` as transport. All of them are more reliable than the `mail` command of PHP.
 
-## How to use Mailer from sending complex emails
+## How to use Mailer for sending complex emails
 
 Besides sending simple text emails, Mailer supports an alternative interface of `toobox->mail` for sending complex emails (HTML, attachments, iCal) from other extensions:
 
