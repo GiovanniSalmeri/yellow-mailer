@@ -2,15 +2,13 @@
 
 Email creation and transfer.
 
-<p align="center"><img src="mailer-screenshot.png?raw=true" alt="Screenshot"></p>
-
 ## How to install an extension
 
 [Download ZIP file](https://github.com/GiovanniSalmeri/yellow-mailer/archive/main.zip) and copy it into your `system/extensions` folder. [Learn more about extensions](https://github.com/annaesvensson/yellow-update).
 
 ## How to use Mailer
 
-If Mailer is installed, it will be automatically used for email delivering by all other Yellow extension which employ the method `toolbox->mail`. You can choose in the settings between `sendmail`, `qmail`, and `SMTP` as transport. All of them are more reliable than the `mail` command of PHP.
+If Mailer is installed, it will be automatically used for email delivering by all other Yellow extensions which employ the method `toolbox->mail`. You can choose in the settings between `sendmail`, `qmail`, and `SMTP` as transport. All of them are more reliable than the `mail` command of PHP.
 
 ## How to use Mailer from sending complex emails
 
