@@ -58,7 +58,21 @@ An iCalendar part can be added with the following fields:
 
 ## Examples
 
-Sending an email from an extension:
+Sending a simple email from an extension:
+
+```
+$headers = [
+    "From" => "Lucy White <lucy@example.net>",
+    "To" => "john@example.org, Mary Penn <marypenn@example.com>",
+    "Subject" => "My first email",
+    "Content-Type" => "text/plain; charset=utf-8",
+];
+$message = "**Yellow** is the best content management system in the world!";
+
+$status = $this->yellow->toolbox->mail("message", $headers, $message);
+```
+
+Sending a complex email from an extension:
 
 ```
 $mail["text"]["plain"]["body"] = "**Yellow** is the best content management system in the world!";
