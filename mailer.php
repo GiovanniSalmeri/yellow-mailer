@@ -292,7 +292,7 @@ class YellowMailer {
     }
 
     // Send email (after sanitising, validating and building)
-    public function send($mail, $dontValidate = false) {
+    public function send(&$mail, $dontValidate = false) {
         $this->sanitise($mail);
         if (!$dontValidate) {
             list($success, $errors) = $this->validate($mail, false);
@@ -421,8 +421,8 @@ class YellowMailer {
             $value = filter_var(trim($value), FILTER_UNSAFE_RAW, FILTER_FLAG_STRIP_LOW); // returns false if not a string
         });
         @array_walk_recursive($mail["text"], function(&$value) {
-            $value = str_replace([ "\r", "\n" ], [ "", "\r\n" ], trim($value));
-            $value = preg_replace('/[^[:print:]\n]/u', "", $value);
+            $value = str_replace([ "\r", "\n" ], [ "", "\r\n" ], rtrim($value)); // http://pobox.com/~djb/docs/smtplf.html
+            $value = preg_replace('/[^[:print:]\t\r\n]/u', "", $value);
         });
         @array_walk_recursive($mail["attachments"], function(&$value) {
             $value = filter_var(trim($value), FILTER_UNSAFE_RAW, FILTER_FLAG_STRIP_LOW);
