@@ -2,7 +2,7 @@
 // Mailer extension, https://github.com/GiovanniSalmeri/yellow-mailer
 
 class YellowMailer {
-    const VERSION = "0.8.17";
+    const VERSION = "0.8.19";
     public $yellow;         //access to API
     private $smtpSocket;
 
@@ -13,7 +13,7 @@ class YellowMailer {
         $this->yellow->system->setDefault("mailerTransport", "sendmail"); // sendmail / qmail / smtp
         $this->yellow->system->setDefault("mailerSendmailPath", "/usr/sbin/sendmail");
         $this->yellow->system->setDefault("mailerSmtpServer", "");
-        $this->yellow->system->setDefault("mailerSmtpSecurity", "ssl"); // ssl starttls none
+        $this->yellow->system->setDefault("mailerSmtpSecurity", "ssl"); // ssl / starttls / none
         $this->yellow->system->setDefault("mailerSmtpUsername", "");
         $this->yellow->system->setDefault("mailerSmtpPassword", "");
         $this->yellow->system->setDefault("mailerAttachmentDirectory", "media/attachments/");
@@ -193,15 +193,20 @@ class YellowMailer {
     // Handle mail sending
     public function onMail($action, $headers, $message) {
         $mail = [];
+        $simple = false;
         if (is_array($headers) && is_string($message)) {
             $mail["headers"] = $this->normaliseHeaders($headers);
-            $mail["text"]["plain"]["body"] = $message;
-        } elseif (is_array($headers) && $message===true) {
-            $mail = $headers;
+            $mail["message"]["text"]["plain"]["body"] = $message;
+            $simple = true;
+        } elseif (is_array($headers) && is_array($message)) {
+            $mail["headers"] = $this->normaliseHeaders($headers);
+            $mail["message"] = $message;
+	} elseif (is_array($headers) && $message===true) { // TODO: remove later, for backwards compatibility
+            $mail = $this->convertOldFormat($headers);
         } else {
             return 500;
         }
-        list($success, $errors) = $this->send($mail);
+        list($success, $errors) = $this->send($mail, false, $simple);
         if (!$success) $this->yellow->toolbox->log("error", "Mailer: ".implode(", ", $errors));
         return $success ? 200 : 500;
 
@@ -221,6 +226,16 @@ class YellowMailer {
         }
     }
 
+    // TODO: remove later, for backwards compatibility
+    private function convertOldFormat($oldMail) {
+        $mail = [];
+        if (isset($oldMail["headers"])) $mail["headers"] = $oldMail["headers"];
+        if (isset($oldMail["text"])) $mail["message"]["text"] = $oldMail["text"];
+        if (isset($oldMail["attachments"])) $mail["message"]["attachments"] = $oldMail["attachments"];
+        if (isset($oldMail["ical"])) $mail["message"]["ical"] = $oldMail["ical"];
+        return $mail;
+    }
+
     // Normalise headers in format expected by make
     private function normaliseHeaders($input) {
         $headers = [];
@@ -228,10 +243,10 @@ class YellowMailer {
             $key = strtolower($key);
             if (in_array($key, [ "from", "to", "cc", "bcc", "reply-to" ])) {
                 $headers[$key] = is_string($value) ? $this->parseAddresses($value) : $value;
+            } elseif (in_array($key, [ "subject", "content-type", "content-transfer-encoding", ])) {
+                $headers[$key] = $value;
             } elseif (substr($key, 0, 2)=="x-") {
                 $headers["custom"][substr($key, 2)] = $value;
-            } elseif ($key=="subject") {
-                $headers[$key] = $value;
             }
         }
         return $headers;
@@ -239,16 +254,17 @@ class YellowMailer {
 
     // Parses an address string as defined in RFC2822
     private function parseAddresses($text) {
-        $state = "normal";
+        define ("STATE", [ "normal"=>0,  "quoted"=>1, "delimited"=>2, "escaped"=>3 ]);
+        $currentState = STATE["normal"];
         $display = $address = "";
         $list = [];
         $text .= ",";
         for ($i=0; $i<strlen($text); $i++) {
-            if ($state=="normal") {
+            if ($currentState==STATE["normal"]) {
                 if ($text[$i]=="\"") {
-                    $state = "quoted";
+                    $currentState = STATE["quoted"];
                 } elseif ($text[$i]=="<") {
-                    $state = "delimited";
+                    $currentState = STATE["delimited"];
                 } elseif ($text[$i]==":") {
                     $display = "";
                 } elseif ($text[$i]=="," || $text[$i]==";") {
@@ -269,22 +285,22 @@ class YellowMailer {
                 else {
                     $display .= $text[$i];
                 }
-            } elseif ($state=="quoted") {
+            } elseif ($currentState==STATE["quoted"]) {
                 if ($text[$i]=="\"") {
-                    $state = "normal";
+                    $currentState = STATE["normal"];
                 } elseif ($text[$i]=="\\") {
-                    $state = "escaped";
+                    $currentState = STATE["escaped"];
                 } else {
                     $display .= $text[$i];
                 }
-            } elseif ($state=="delimited") {
+            } elseif ($currentState==STATE["delimited"]) {
                 if ($text[$i]==">") {
-                    $state = "normal";
+                    $currentState = STATE["normal"];
                 } else {
                     $address .= $text[$i];
                 }
-            } elseif ($state=="escaped") {
-                $state = "quoted";
+            } elseif ($currentState==STATE["escaped"]) {
+                $currentState = STATE["quoted"];
                 $display .= $text[$i];
             }
         }
@@ -292,13 +308,13 @@ class YellowMailer {
     }
 
     // Send email (after sanitising, validating and building)
-    public function send(&$mail, $dontValidate = false) {
+    public function send(&$mail, $dontValidate = false, $simple = false) {
         $this->sanitise($mail);
         if (!$dontValidate) {
             list($success, $errors) = $this->validate($mail, false);
             if (!$success) return [ false, $errors ];
         }
-        $completeMail = $this->make($mail, false);
+        $completeMail = $this->make($mail, false, $simple);
         $mailerTransport = strtolower($this->yellow->system->get("mailerTransport"));
         if ($mailerTransport=="sendmail" || $mailerTransport=="qmail") {
             return $this->sendmailSend($completeMail);
@@ -313,27 +329,29 @@ class YellowMailer {
     public function validate($mail, $sanitise = true) {
         if ($sanitise) $this->sanitise($mail);
         $checks = [
-            [ [ "text", "plain", "heading" ], false, "string", null ],
-            [ [ "text", "plain", "body" ], true, "string", null ],
-            [ [ "text", "plain", "signature" ], false, "string", null ],
-            [ [ "text", "style-sheet" ], false, "theme", null ],
-            [ [ "text", "html", "heading" ], false, "string", null ],
-            [ [ "text", "html", "body" ], false, "string", null ],
-            [ [ "text", "html", "signature" ], false, "string", null ],
             [ [ "headers", "from" ], false, "array", "email" ],
             [ [ "headers", "to" ], true, "array", "email" ],
             [ [ "headers", "cc" ], false, "array", "email" ],
             [ [ "headers", "bcc" ], false, "array", "email" ],
             [ [ "headers", "reply-to" ], false, "array", "email" ],
             [ [ "headers", "subject" ], true, "string", null ],
+            [ [ "headers", "content-type" ], false, "string", null ],
+            [ [ "headers", "content-transfer-encoding" ], false, "string", null ],
             [ [ "headers", "custom" ], false, "array", "string" ],
-            [ [ "attachments" ], false, "array", "file" ],
-            [ [ "ical", "time", "0" ], isset($mail["ical" ]), "time", null ],
-            [ [ "ical", "time", "1" ], isset($mail["ical" ]), "time", null ],
-            [ [ "ical", "location" ], false, "string", null ],
-            [ [ "ical", "geo" ], false, "geo", null ],
-            [ [ "ical", "summary" ], isset($mail["ical" ]), "string", null ],
-            [ [ "ical", "description" ], false, "string", null ],
+            [ [ "message", "text", "plain", "heading" ], false, "string", null ],
+            [ [ "message", "text", "plain", "body" ], true, "string", null ],
+            [ [ "message", "text", "plain", "signature" ], false, "string", null ],
+            [ [ "message", "text", "style-sheet" ], false, "theme", null ],
+            [ [ "message", "text", "html", "heading" ], false, "string", null ],
+            [ [ "message", "text", "html", "body" ], false, "string", null ],
+            [ [ "message", "text", "html", "signature" ], false, "string", null ],
+            [ [ "message", "attachments" ], false, "array", "file" ],
+            [ [ "message", "ical", "time", "0" ], isset($mail["ical"]), "time", null ],
+            [ [ "message", "ical", "time", "1" ], isset($mail["ical"]), "time", null ],
+            [ [ "message", "ical", "location" ], false, "string", null ],
+            [ [ "message", "ical", "geo" ], false, "geo", null ],
+            [ [ "message", "ical", "summary" ], isset($mail["ical"]), "string", null ],
+            [ [ "message", "ical", "description" ], false, "string", null ],
         ];
 
         $errors = [];
@@ -364,6 +382,7 @@ class YellowMailer {
             if (count($keys)==1) unset($mail[$keys[0]]);
             elseif (count($keys)==2) unset($mail[$keys[0]][$keys[1]]);
             elseif (count($keys)==3) unset($mail[$keys[0]][$keys[1]][$keys[2]]);
+            elseif (count($keys)==4) unset($mail[$keys[0]][$keys[1]][$keys[2]][$keys[3]]);
         }
         if ($attachmentsSize > $this->yellow->system->get("mailerAttachmentsMaxSize")) $errors[] = $this->yellow->language->getText("mailerTooBigAttachments");
         $mail = $this->array_clean($mail);
@@ -417,14 +436,15 @@ class YellowMailer {
 
     // Sanitise values of $mail array, translate in punycode international addresses
     private function sanitise(&$mail) {
+        if (!isset($mail["message"])) $mail = $this->convertOldFormat($mail); // TODO: remove later, for backwards compatibility
         @array_walk_recursive($mail["headers"], function(&$value) {
-            $value = filter_var(trim($value), FILTER_UNSAFE_RAW, FILTER_FLAG_STRIP_LOW); // returns false if not a string
+            $value = filter_var(trim($value), FILTER_UNSAFE_RAW, FILTER_FLAG_STRIP_LOW);
         });
-        @array_walk_recursive($mail["text"], function(&$value) {
+        @array_walk_recursive($mail["message"]["text"], function(&$value) {
             $value = str_replace([ "\r", "\n" ], [ "", "\r\n" ], rtrim($value)); // http://pobox.com/~djb/docs/smtplf.html
             $value = preg_replace('/[^[:print:]\t\r\n]/u', "", $value);
         });
-        @array_walk_recursive($mail["attachments"], function(&$value) {
+        @array_walk_recursive($mail["message"]["attachments"], function(&$value) {
             $value = filter_var(trim($value), FILTER_UNSAFE_RAW, FILTER_FLAG_STRIP_LOW);
         });
         if (function_exists("idn_to_ascii")) { // international addresses
@@ -442,30 +462,40 @@ class YellowMailer {
     }
 
     // Build mail as a single message/rfc822
-    public function make(&$mail, $sanitise = true) {
+    public function make(&$mail, $sanitise = true, $simple = false) {
         if ($sanitise) $this->sanitise($mail);
         $output = null;
         $output .= "Date: ".date(DATE_RFC2822)."\r\n";
-        $output .= "Mime-Version: 1.0\r\n";
+        $output .= "MIME-Version: 1.0\r\n";
         if (!isset($mail["headers"]["from"])) $mail["headers"]["from"] = [$this->yellow->system->get("author")=>$this->yellow->system->get("email")];
         foreach ([ "from", "to", "cc", "bcc", "reply-to" ] as $headerName) {
             if (isset($mail["headers"][$headerName])) $output .= $this->encodeEmailHeader($headerName, $mail["headers"][$headerName])."\r\n";
         }
-        if (isset($mail["headers"]["subject"])) $output .= $this->encodeHeader("Subject", $mail["headers"]["subject"])."\r\n";
+        if (isset($mail["headers"]["subject"])) $output .= $this->encodeHeader("subject", $mail["headers"]["subject"])."\r\n";
         if (isset($mail["headers"]["custom"])) {
             foreach ($mail["headers"]["custom"] as $key=>$header) {
                 $output .= $this->encodeHeader("X-".$key, $header)."\r\n";
             }
         }
-        if (isset($mail["ical"])) {
-            $icalText = $this->makeIcal($mail["ical"], $mail["headers"]); // must be included twice
-            $mail["text"]["ical-text"] = $icalText;
-            $mail["attachments"]["ical-text"] = $icalText;
-        }
-        if (isset($mail["attachments"])) {
-            $output .= $this->makeMixed($mail["text"], $mail["attachments"]);
+        if ($simple) {
+            if (!isset($mail["headers"]["content-type"])) $mail["headers"]["content-type"] = "text/plain; charset=utf-8";
+            foreach ([ "content-type", "content-transfer-encoding" ] as $headerName) {
+                if (isset($mail["headers"][$headerName])) $output .= $this->encodeHeader($headerName, $mail["headers"][$headerName])."\r\n";
+            }
+            $output .= "\r\n";
+            $output .= $mail["message"]["text"]["plain"]["body"]."\r\n";
         } else {
-            $output .= $this->makeMailText($mail["text"]);
+            if (isset($mail["message"]["ical"])) {
+                $icalText = $this->makeIcal($mail["message"]["ical"], $mail["headers"]);
+                // TODO: suppress one of the two when email clients finally agree on iCal detection
+                $mail["message"]["ical-text"] = $icalText;
+                $mail["message"]["attachments"]["ical-text"] = $icalText;
+            }
+            if (isset($mail["message"]["attachments"])) {
+                $output .= $this->makeMixed($mail["message"]["text"], $mail["message"]["attachments"]);
+            } else {
+                $output .= $this->makeMailText($mail["message"]["text"]);
+            }
         }
         return $output;
     }
@@ -474,21 +504,21 @@ class YellowMailer {
     private function makeIcal($ical, $headers) {
         $quote = function($string) { return '"'. str_replace([ '^', '"' ], [ "^^", "^'" ], $string).'"'; }; // RFC 6868
         $escape = function($string) { return addcslashes($string, '\,;'); };
-        $timeFormat = "Ymd\THis\Z";
-        $start = gmdate($timeFormat, strtotime($ical["time"][0]));
-        $end = gmdate($timeFormat, strtotime($ical["time"][1]));
-        $fromEmail = reset($headers["from"]); // first (and only) value
-        $fromName = key($headers["from"]); // first (and only) key
+        define ("DATE_RFC5545", "Ymd\THis\Z");
+        $start = gmdate(DATE_RFC5545, strtotime($ical["time"][0]));
+        $end = gmdate(DATE_RFC5545, strtotime($ical["time"][1]));
+        $fromEmail = current($headers["from"]);
+        $fromName = key($headers["from"]);
         $lines = [];
-        $lines[] ="BEGIN:VCALENDAR";
-        $lines[] ="PRODID:-//github.com/GiovanniSalmeri//NONSGML YellowMailer ".$this::VERSION."//EN";
-        $lines[] ="VERSION:2.0";
-        $lines[] ="METHOD:REQUEST";
-        $lines[] ="BEGIN:VEVENT";
+        $lines[] = "BEGIN:VCALENDAR";
+        $lines[] = "PRODID:-//github.com/GiovanniSalmeri//NONSGML YellowMailer ".$this::VERSION."//EN";
+        $lines[] = "VERSION:2.0";
+        $lines[] = "METHOD:REQUEST";
+        $lines[] = "BEGIN:VEVENT";
         $lines[] ="UID:".md5($start."/".$ical["summary"]."@".$this->yellow->toolbox->getServer("SERVER_NAME"));
-        $lines[] ="DTSTAMP:".gmdate($timeFormat);
-        $lines[] ="DTSTART:".$start;
-        $lines[] ="DTEND:".$end;
+        $lines[] = "DTSTAMP:".gmdate(DATE_RFC5545);
+        $lines[] = "DTSTART:".$start;
+        $lines[] = "DTEND:".$end;
         $lines[] = "ORGANIZER".(is_string($fromName) ? ";CN=".$quote($fromName) : "").":mailto:$fromEmail";
         foreach ($headers["to"] as $key=>$toEmail) {
             $lines[] = "ATTENDEE;ROLE=REQ-PARTICIPANT;PARTSTAT=NEEDS-ACTION;RSVP=TRUE".(is_string($key) ? ";CN=".$quote($key) : "").":mailto:$toEmail";
@@ -497,8 +527,8 @@ class YellowMailer {
         if (isset($ical["geo"])) $lines[] ="GEO:".str_replace([ ",", " " ], [ ";", "" ], $ical["geo"]);
         $lines[] = "SUMMARY:".$escape($ical["summary"]);
         if (isset($ical["description"])) $lines[] = "DESCRIPTION:".$escape($ical["description"]);
-        $lines[] ="END:VEVENT";
-        $lines[] ="END:VCALENDAR";
+        $lines[] = "END:VEVENT";
+        $lines[] = "END:VCALENDAR";
         $output = null;
         foreach ($lines as $line) {
             while (strlen($line) > 1) {
@@ -654,7 +684,7 @@ class YellowMailer {
             $lastLineLength = $lastNewline===false ? strlen($output) : strlen($output) - $lastNewline -1;
             $output .= $lastLineLength > 0 && 77 - $lastLineLength < strlen($address) ? "\r\n  " : "";
             $output .= is_string($name) ? " <".$address.">" : $address;
-            $output .= $name===key(array_slice($addresses, -1)) ? "" : ",\r\n "; // PHP 7.3 array_key_last
+            $output .= $name===key(array_slice($addresses, -1)) ? "" : ",\r\n "; // TODO: PHP>=7.3 array_key_last()
         }
         return $output;
     }
@@ -697,7 +727,7 @@ class YellowMailer {
         $markdown = new YellowMarkdownParser($this->yellow, $this->yellow->page);
         $markdown->no_markup = true;
         $markdown->hard_wrap = true;
-        return str_replace("\n", "\r\n", $markdown->transform($text)); // change newlines
+        return str_replace("\n", "\r\n", $markdown->transform($text));
     }
 
     // Return content of style sheet
