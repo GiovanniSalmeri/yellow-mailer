@@ -10,7 +10,7 @@ Email creation and transfer.
 
 Mailer is meant to improve the functionality of other extensions, by providing `sendmail`, `qmail`, or `SMTP` transports for email delivering. All of them are more reliable than the default `mail` function of PHP.
 
-When installed, this extension will be automatically used by all extensions which employ the [standard method](https://datenstrom.se/yellow/help/api-for-developers#yellow-toolbox) `toolbox->mail` (for example [Contact](https://github.com/annaesvensson/yellow-contact)).
+When installed, Mailer will be automatically used by all extensions which employ the [standard method](https://datenstrom.se/yellow/help/api-for-developers#yellow-toolbox) `toolbox->mail` (for example [Contact](https://github.com/annaesvensson/yellow-contact)).
 
 Delivering errors are logged in `yellow-website.log`.
 
