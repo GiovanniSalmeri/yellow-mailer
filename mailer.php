@@ -18,7 +18,7 @@ class YellowMailer {
         $this->yellow->system->setDefault("mailerSmtpPassword", "");
         $this->yellow->system->setDefault("mailerAttachmentDirectory", "media/attachments/");
         $this->yellow->system->setDefault("mailerAttachmentsMaxSize", "20000000");
-        $this->yellow->language->setDefaults([
+        $this->yellow->language->setDefaults(array(
             "Language: en",
             "MailerMissingField: Missing required field",
             "MailerBadType: Bad variable type",
@@ -187,7 +187,7 @@ class YellowMailer {
             "MailerSmtpRecipientError: Odbiorca odrzucony",
             "MailerSmtpError: Błąd w odpowiedzi protokołu SMTP",
             "MailerUnknownTransport: Nieznany transport poczty",
-        ]);
+        ));
     }
 
     // Handle mail sending
