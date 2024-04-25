@@ -1,4 +1,4 @@
-# Mailer 0.8.19
+# Mailer 0.9.1
 
 Email creation and transfer.
 

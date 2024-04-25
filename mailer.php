@@ -2,7 +2,7 @@
 // Mailer extension, https://github.com/GiovanniSalmeri/yellow-mailer
 
 class YellowMailer {
-    const VERSION = "0.8.19";
+    const VERSION = "0.9.1";
     public $yellow;         //access to API
     private $smtpSocket;
 
