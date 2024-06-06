@@ -254,17 +254,17 @@ class YellowMailer {
 
     // Parses an address string as defined in RFC2822
     private function parseAddresses($text) {
-        define ("STATE", [ "normal"=>0,  "quoted"=>1, "delimited"=>2, "escaped"=>3 ]);
-        $currentState = STATE["normal"];
+        $state = [ "normal"=>0,  "quoted"=>1, "delimited"=>2, "escaped"=>3 ];
+        $currentState = $state["normal"];
         $display = $address = "";
         $list = [];
         $text .= ",";
         for ($i=0; $i<strlen($text); $i++) {
-            if ($currentState==STATE["normal"]) {
+            if ($currentState==$state["normal"]) {
                 if ($text[$i]=="\"") {
-                    $currentState = STATE["quoted"];
+                    $currentState = $state["quoted"];
                 } elseif ($text[$i]=="<") {
-                    $currentState = STATE["delimited"];
+                    $currentState = $state["delimited"];
                 } elseif ($text[$i]==":") {
                     $display = "";
                 } elseif ($text[$i]=="," || $text[$i]==";") {
@@ -285,22 +285,22 @@ class YellowMailer {
                 else {
                     $display .= $text[$i];
                 }
-            } elseif ($currentState==STATE["quoted"]) {
+            } elseif ($currentState==$state["quoted"]) {
                 if ($text[$i]=="\"") {
-                    $currentState = STATE["normal"];
+                    $currentState = $state["normal"];
                 } elseif ($text[$i]=="\\") {
-                    $currentState = STATE["escaped"];
+                    $currentState = $state["escaped"];
                 } else {
                     $display .= $text[$i];
                 }
-            } elseif ($currentState==STATE["delimited"]) {
+            } elseif ($currentState==$state["delimited"]) {
                 if ($text[$i]==">") {
-                    $currentState = STATE["normal"];
+                    $currentState = $state["normal"];
                 } else {
                     $address .= $text[$i];
                 }
-            } elseif ($currentState==STATE["escaped"]) {
-                $currentState = STATE["quoted"];
+            } elseif ($currentState==$state["escaped"]) {
+                $currentState = $state["quoted"];
                 $display .= $text[$i];
             }
         }
@@ -437,14 +437,14 @@ class YellowMailer {
     // Sanitise values of $mail array, translate in punycode international addresses
     private function sanitise(&$mail) {
         if (!isset($mail["message"])) $mail = $this->convertOldFormat($mail); // TODO: remove later, for backwards compatibility
-        @array_walk_recursive($mail["headers"], function(&$value) {
+        if (isset($mail["headers"]) && is_array($mail["headers"])) array_walk_recursive($mail["headers"], function(&$value) {
             $value = filter_var(trim($value), FILTER_UNSAFE_RAW, FILTER_FLAG_STRIP_LOW);
         });
-        @array_walk_recursive($mail["message"]["text"], function(&$value) {
+        if (isset($mail["message"]["text"]) && is_array($mail["message"]["text"])) array_walk_recursive($mail["message"]["text"], function(&$value) {
             $value = str_replace([ "\r", "\n" ], [ "", "\r\n" ], rtrim($value)); // http://pobox.com/~djb/docs/smtplf.html
             $value = preg_replace('/[^[:print:]\t\r\n]/u', "", $value);
         });
-        @array_walk_recursive($mail["message"]["attachments"], function(&$value) {
+        if (isset($mail["message"]["attachments"]) && is_array($mail["message"]["attachments"])) array_walk_recursive($mail["message"]["attachments"], function(&$value) {
             $value = filter_var(trim($value), FILTER_UNSAFE_RAW, FILTER_FLAG_STRIP_LOW);
         });
         if (function_exists("idn_to_ascii")) { // international addresses
@@ -502,11 +502,11 @@ class YellowMailer {
 
     // Build iCalendar object RFC 5545
     private function makeIcal($ical, $headers) {
+        $date_rfc5545 = "Ymd\THis\Z";
         $quote = function($string) { return '"'. str_replace([ '^', '"' ], [ "^^", "^'" ], $string).'"'; }; // RFC 6868
         $escape = function($string) { return addcslashes($string, '\,;'); };
-        define ("DATE_RFC5545", "Ymd\THis\Z");
-        $start = gmdate(DATE_RFC5545, strtotime($ical["time"][0]));
-        $end = gmdate(DATE_RFC5545, strtotime($ical["time"][1]));
+        $start = gmdate($date_rfc5545, strtotime($ical["time"][0]));
+        $end = gmdate($date_rfc5545, strtotime($ical["time"][1]));
         $fromEmail = current($headers["from"]);
         $fromName = key($headers["from"]);
         $lines = [];
@@ -516,7 +516,7 @@ class YellowMailer {
         $lines[] = "METHOD:REQUEST";
         $lines[] = "BEGIN:VEVENT";
         $lines[] ="UID:".md5($start."/".$ical["summary"]."@".$this->yellow->toolbox->getServer("SERVER_NAME"));
-        $lines[] = "DTSTAMP:".gmdate(DATE_RFC5545);
+        $lines[] = "DTSTAMP:".gmdate($date_rfc5545);
         $lines[] = "DTSTART:".$start;
         $lines[] = "DTEND:".$end;
         $lines[] = "ORGANIZER".(is_string($fromName) ? ";CN=".$quote($fromName) : "").":mailto:$fromEmail";
