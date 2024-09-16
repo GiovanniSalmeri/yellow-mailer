@@ -16,7 +16,7 @@ Delivering errors are logged in `yellow-website.log`.
 
 ## How to use Mailer for creating complex emails
 
-Besides supporting various transports for email delivering, Mailer allows other exensions to create complex emails (with HTML, or attachments, or iCal events). In order to do this, the following alternative interface of `toobox->mail` is supported.
+Besides supporting various transports for email delivering, Mailer allows other extensions to create complex emails (with HTML, or attachments, or iCal events). In order to do this, the following alternative interface of `toobox->mail` is supported.
 
 `toolbox->mail($action, $headers, $message): bool`
 
