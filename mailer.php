@@ -418,7 +418,7 @@ class YellowMailer {
             } else {
                 return $this->yellow->language->getText("mailerMissingAttachment")." ".@(string)$var;
             }
-            return @is_file($var) ? false : $mailerBadType;
+            return @is_file($var) ? false : $this->yellow->language->getText("mailerBadType");
         }
     }
 
