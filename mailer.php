@@ -500,10 +500,10 @@ class YellowMailer {
         return $output;
     }
 
-    // Build iCalendar object RFC 5545
+    // Build iCalendar object RFC 5545, RFC 6868 (quoting), RFC 2446 (method)
     private function makeIcal($ical, $headers) {
         $date_rfc5545 = "Ymd\THis\Z";
-        $quote = function($string) { return '"'. str_replace([ '^', '"' ], [ "^^", "^'" ], $string).'"'; }; // RFC 6868
+        $quote = function($string) { return '"'. str_replace([ '^', '"' ], [ "^^", "^'" ], $string).'"'; };
         $escape = function($string) { return addcslashes($string, '\,;'); };
         $start = gmdate($date_rfc5545, strtotime($ical["time"][0]));
         $end = gmdate($date_rfc5545, strtotime($ical["time"][1]));
@@ -513,16 +513,13 @@ class YellowMailer {
         $lines[] = "BEGIN:VCALENDAR";
         $lines[] = "PRODID:-//github.com/GiovanniSalmeri//NONSGML YellowMailer ".$this::VERSION."//EN";
         $lines[] = "VERSION:2.0";
-        $lines[] = "METHOD:REQUEST";
+        $lines[] = "METHOD:PUBLISH";
         $lines[] = "BEGIN:VEVENT";
         $lines[] ="UID:".md5($start."/".$ical["summary"]."@".$this->yellow->toolbox->getServer("SERVER_NAME"));
         $lines[] = "DTSTAMP:".gmdate($date_rfc5545);
         $lines[] = "DTSTART:".$start;
         $lines[] = "DTEND:".$end;
         $lines[] = "ORGANIZER".(is_string($fromName) ? ";CN=".$quote($fromName) : "").":mailto:$fromEmail";
-        foreach ($headers["to"] as $key=>$toEmail) {
-            $lines[] = "ATTENDEE;ROLE=REQ-PARTICIPANT;PARTSTAT=NEEDS-ACTION;RSVP=TRUE".(is_string($key) ? ";CN=".$quote($key) : "").":mailto:$toEmail";
-        }
         if (isset($ical["location"])) $lines[] = "LOCATION:".$escape($ical["location"]);
         if (isset($ical["geo"])) $lines[] ="GEO:".str_replace([ ",", " " ], [ ";", "" ], $ical["geo"]);
         $lines[] = "SUMMARY:".$escape($ical["summary"]);
@@ -613,7 +610,7 @@ class YellowMailer {
         $plainText = null;
         if ($isIcalText) {
             $plainText = $plain;
-            $mimeType = "text/calendar";
+            $mimeType = "text/calendar; method=PUBLISH";
         } else {
             if (isset($plain["heading"])) $plainText .= $plain["heading"]."\r\n\r\n".str_repeat("=", 30)."\r\n\r\n";
             $plainText .= $plain["body"]."\r\n";
