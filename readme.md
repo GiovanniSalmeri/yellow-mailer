@@ -1,6 +1,6 @@
-# Mailer 0.9.1
+# Mailer 1.0.0
 
-Email creation and transfer.
+Email creation and transfer. Developed by Giovanni Salmeri.
 
 ## How to install an extension
 
@@ -43,7 +43,7 @@ The body and optional heading and signature can use markdown formatting, without
 `$message["text"]["html"]["body"]`  
 `$message["text"]["html"]["signature"]`  
 
-Attachments can be added wih the following field:
+Attachments can be added with the following field:
 
 `$message["attachments"]` an array of names of files located in the directory `media/attachments/`  
 
@@ -105,6 +105,4 @@ The following settings can be configured in file `system/extensions/yellow-syste
 
 The address in `MailerSender` receives non-delivery reports. For emails to be successfully delivered, this address should be in the domain of the SMTP server, or from which sendmail is run. For security reasons it must never be assigned a user-supplied value.
 
-## Developer
-
-Giovanni Salmeri. [Get help](https://datenstrom.se/yellow/help/).
+Do you have questions? [Get help](https://datenstrom.se/yellow/help/).
